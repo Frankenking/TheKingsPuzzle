@@ -1,13 +1,11 @@
 import tkinter
 
-class Externals:
-    
-    def __init__(self) -> None:
-        pass
-    
-    def exodus():
-        root = tkinter.Tk()
-        root.geometry("0x0")
-        root.iconify()
-        root.title("Exodus")
-        root.mainloop()
+class WindowHandler(tkinter.Tk):
+        
+        def __init__(self, windowGeometry="0x0", windowTitle="None", iconifyWindow = False) -> None:
+            super().__init__()
+            self.geometry(windowGeometry)
+            if iconifyWindow:
+                self.iconify()
+            self.title(windowTitle)
+            self.mainloop()

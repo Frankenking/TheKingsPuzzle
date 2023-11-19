@@ -1,10 +1,9 @@
 
 #folder imports
-import assets
-import externals
+import assets, externals
 
 #py imports
-import os, threading, time, random, math
+import os, multiprocessing, time, random, math
 
 
 class Program:
@@ -13,21 +12,24 @@ class Program:
         
         self.programRunning = True
 
-        self.threadMain = threading.Thread(target=self.Game, args=[self.programRunning])
-        self.threadMain.run()
+        self.Game(self.programRunning)
         
-    
-    
     class Game:
         
         def __init__(self, *args) -> None:
             
-            self.programRunning:bool = args[0]
+            self.PROGRAMVARS = args
+            
+            self.programRunning:bool = self.PROGRAMVARS[0]
             
             self.menuData  = self.Menu()
             
             if self.menuData.hasQuit:
-                return None
+                return
+            
+            print(f" SEED: {self.menuData.gameSettings['seed']}\n DIFFICULTY: {self.menuData.gameSettings['difficulty']}\n Loading...")
+            time.sleep(1)
+            self._os('cls')
             
             self.storylineNumber:int = 0
             random.seed(self.menuData.gameSettings.get('seed'))
@@ -41,9 +43,13 @@ class Program:
                 print(assets.storylines[self.storylineNumber] + "\n-----------------")
                 time.sleep(1)
                 self.incStoryline()
-                
+            
+            self.exodusWindow = self._generateThread(externals.WindowHandler, '0x0',  'Exodus', True)
+            self.exodusWindow.start()
+            
+            
             if self._getUserInput() == "Exodus":
-                self.incStoryline()
+                self.exodusWindow.terminate()
                 print(assets.storylines[self.storylineNumber] + "\n------------------")
                 self._os('pause')
                 self._os('cls')
@@ -51,27 +57,48 @@ class Program:
             else:
                 
                 self._os('cls')
-                print("\n" + assets.userFailureLines[random.randint(0, 4)] + "\n")
+                print("\n" + assets.userFailureLines[random.randint(0, len(assets.userFailureLines))] + "\n")
                 self._os('pause')
                 return
+
+            self._proc()
+            
+        def _proc(self) -> None: #main runtime game loop
+            
+            while self.programRunning:
+                self._os('pause')
         
-        def _proc(self) -> None:
-            pass
-        
-        def incStoryline(self) -> None:
+        def incStoryline(self) -> None: #progresses the lines that contribue to the story when called
             self.storylineNumber +=1
             
-        def _getUserInput(self, type='str'):
+        def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions
+            
             try:
-                _ = input("\nUser Input -->")
-                return _
+                userInput = input("\nUser Input -->")
+                self._os('cls')
+                
+                match type:
+                    
+                    case 'str':
+                        return userInput
+                    
+                    case 'int':
+                        return int(userInput)
+                    
+                    case 'float':
+                        return float(userInput)
+                        
             except:
+                
+                print("Invalid Character")
                 return self._getUserInput(type)
-            
-        def _os(self, arg):
-                os.system(arg)
-            
-            
+                
+        def _os(self, cmd):
+                os.system(cmd)
+        
+        def _generateThread(self, *args):  #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc.
+            return multiprocessing.Process(target=args[0], args=args[1:len(args)])
+        
         class Menu:
         
             def __init__(self)  -> None:
@@ -88,7 +115,7 @@ class Program:
                 
                 self._menu()
                 
-            def _menu(self) -> None:
+            def _menu(self) -> None: #Menu handles interactions before the game starts
                 
                 while not self.hasQuit:
                     print(f"{assets.ascii[1]} \n Type the words you see to access them Ex 'OPTIONS' \n\nSTART\nLOAD\nOPTIONS\nQUIT\nYou may want to visit OPTIONS first to customize your experience")
@@ -113,23 +140,66 @@ class Program:
                             print("Invalid Request")
                             
             
-            def _gameOptions(self) -> None:
+            def _gameOptions(self) -> None: #options interface that takes user input and edits the gameSettings attribute before the Game is started
                 back = False
+                
                 while not back:
+                    
+                    print(self.gameSettings)
+                    
                     try:
-                        print(f"{assets.ascii[2]} \n Type the Option then a space then a number with the given range, Ex 'Difficulty 1' or 'Difficulty 2'\n ")
-                        self._getUserInput()
+                        
+                        print(f"{assets.ascii[2]} \n Type the Option you wish to modify then in the next prompt the number value with the specified range, Ex 'DIFFICULTY' then '1' \n\nDIFFICULTY\nSEED\nBACK ")
+                        userInput = self._getUserInput()
+                        userInput = userInput.upper()
+                        
+                        match userInput:
+                            
+                            case "DIFFICULTY":
+                                print("'1' for Normal\n'2' for Hard")
+                                userInput = self._getUserInput("int")
+                                
+                                if userInput == 1 or userInput == 2:
+                                    self.gameSettings["difficulty"] = userInput
+                                else:
+                                    print("Invalid Difficulty")
+                                    return self._gameOptions()
+                                
+                            case "SEED":
+                                print("This option determines the consistent randomness, Input any whole value Ex 1 or 200 or 1999 etc.")
+                                userInput = self._getUserInput("int")
+                                self.gameSettings["seed"] = userInput
+                            
+                            case "BACK":
+                                return
+                            
+                            case _:
+                                print("Invalid Request")
+                                
                     except:
                         print("Invalid Request")
-            
-            def _getUserInput(self, type='str'):
+                        
+                        
+            def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions
+                
                 try:
-                    _ = input("\nUser Input -->")
+                    userInput = input("\nUser Input -->")
                     self._os('cls')
-                    return _
+                    
+                    match type:
+                        
+                        case 'str':
+                            return userInput
+                        
+                        case 'int':
+                            return int(userInput)
+                        
+                        case 'float':
+                            return float(userInput)
+                        
                 except:
-                    self._os('cls')
-                    print("Error!")
+                    
+                    print("Invalid Character")
                     return self._getUserInput(type)
             
             def _load(self):
@@ -141,13 +211,9 @@ class Program:
                 self.hasQuit = True
                 return
             
-            def _os(self, arg):
-                os.system(arg)
-                
-    def __str__(self) -> str:
-        pass
+            def _os(self, cmd):
+                os.system(cmd)
     
-    
+        
 if __name__ == '__main__':
     _program = Program()
-    
