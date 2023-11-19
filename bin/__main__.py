@@ -65,6 +65,7 @@ class Program:
             
         def _proc(self) -> None: #main runtime game loop
             
+            self.MapGenerator(self.menuData.gameSettings['difficulty'])
             while self.programRunning:
                 self._os('pause')
         
@@ -213,7 +214,40 @@ class Program:
             
             def _os(self, cmd):
                 os.system(cmd)
-    
-        
+
+        class MapGenerator:
+            
+            def __init__(self, difficulty) -> None:
+                
+                self.dimensions:list = self._generateDimensions(difficulty)
+                self.map = []
+                for x in range(self.dimensions[0]):
+                    for y in range(self.dimensions[1]):
+                        self.map.append(str(x) +","+ str(y))
+                
+                count = 0
+                for room in self.map:
+                    room = self.Room(room)
+                    self.map[count] = room
+                    count +=1
+                
+            def _generateDimensions(self, difficulty) -> list:
+                split = random.randint(1, 5)
+                x = 5*difficulty
+                y = 5*difficulty
+                if random.randint(0, 1) == 0:
+                    x = x/split
+                else:
+                    y = y/split
+                return int(x+1), int(y+1)
+            
+            class Room:
+                
+                def __init__(self, coords) -> None:
+                    self.coordinates = coords
+                    
+                def __str__(self) -> str:
+                    return self.coordinates
+                
 if __name__ == '__main__':
     _program = Program()
