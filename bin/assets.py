@@ -54,3 +54,19 @@ userFailureLines  = [
     "It was a worthy effort...",
     "Too bad..."
 ]
+
+windowNames = [
+    "EXODUS",
+    "BLESSING",
+    "DISCIPLE",
+    "ALMS",
+    "ANOINT",
+    "GATE",
+    "GENRE",
+    "HERO",
+    "MYSTERY",
+    "NARD",
+    "TABERNACLE",
+    "SABBATH",
+    "SELAH"
+]

@@ -44,12 +44,13 @@ class Program:
                 time.sleep(1)
                 self.incStoryline()
             
-            self.exodusWindow = self._generateThread(externals.WindowHandler, '0x0',  'Exodus', True)
-            self.exodusWindow.start()
+            passWindowName = assets.windowNames[random.randint(0, len(assets.windowNames)-1)]
+            self.passWindow = self._generateThread(externals.WindowHandler, '0x0',  passWindowName, True)
+            self.passWindow.start()
             
             
-            if self._getUserInput() == "Exodus":
-                self.exodusWindow.terminate()
+            if self._getUserInput() == passWindowName:
+                self.passWindow.terminate()
                 print(assets.storylines[self.storylineNumber] + "\n------------------")
                 self._os('pause')
                 self._os('cls')
@@ -61,13 +62,23 @@ class Program:
                 self._os('pause')
                 return
 
+            self.MapObject = self.MapGenerator(self.menuData.gameSettings['difficulty'])
+            
+            self.formattedMap = []
+            for i in range(0, len(self.MapObject.map)):
+                self.formattedMap.append(str(self.MapObject._getDataRoomData(i)))
+                
+            print(self.formattedMap)
+            
+            
             self._proc()
             
         def _proc(self) -> None: #main runtime game loop
             
-            self.MapGenerator(self.menuData.gameSettings['difficulty'])
             while self.programRunning:
+                print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {str(self.MapObject._getDataRoomData(len(self.MapObject.map)-1))}")
                 self._os('pause')
+                
         
         def incStoryline(self) -> None: #progresses the lines that contribue to the story when called
             self.storylineNumber +=1
@@ -214,7 +225,7 @@ class Program:
             
             def _os(self, cmd):
                 os.system(cmd)
-
+            
         class MapGenerator:
             
             def __init__(self, difficulty) -> None:
@@ -225,29 +236,36 @@ class Program:
                     for y in range(self.dimensions[1]):
                         self.map.append(str(x) +","+ str(y))
                 
+                completionRoomNumber = len(self.map)
                 count = 0
                 for room in self.map:
-                    room = self.Room(room)
+                    room = self.Room(room, count)
+                    if count == completionRoomNumber:
+                        room.isCompletionRoom = True
+                        
                     self.map[count] = room
+                    
                     count +=1
-                
+                    
             def _generateDimensions(self, difficulty) -> list:
-                split = random.randint(1, 5)
                 x = 5*difficulty
                 y = 5*difficulty
-                if random.randint(0, 1) == 0:
-                    x = x/split
-                else:
-                    y = y/split
-                return int(x+1), int(y+1)
+                return x, y
+            
+            def _getDataRoomData(self, roomNumber):
+                return self.map[roomNumber]
+                    
+                    
             
             class Room:
                 
-                def __init__(self, coords) -> None:
-                    self.coordinates = coords
-                    
+                def __init__(self, roomCoords, roomN) -> None:
+                    self.coordinates = roomCoords
+                    self.roomNumber = roomN
+                    self.isCompletionRoom = False
+
                 def __str__(self) -> str:
-                    return self.coordinates
+                    return str(self.coordinates)
                 
 if __name__ == '__main__':
     _program = Program()
