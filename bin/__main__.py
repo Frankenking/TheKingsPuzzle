@@ -1,6 +1,6 @@
 
 #folder imports
-import assets, externals
+import assets, puzzles
 
 #py imports
 import os, multiprocessing, time, random, math
@@ -45,7 +45,7 @@ class Program:
                 self.incStoryline()
             
             passWindowName = assets.windowNames[random.randint(0, len(assets.windowNames)-1)]
-            self.passWindow = self._generateThread(externals.WindowHandler, '0x0',  passWindowName, True)
+            self.passWindow = self._generateThread(puzzles.WindowHandler, '0x0',  passWindowName, True)
             self.passWindow.start()
             
             
@@ -264,6 +264,9 @@ class Program:
                     self.roomNumber = roomN
                     self.isCompletionRoom = False
 
+                def _generatePuzzle(self):
+                    pass
+                
                 def __str__(self) -> str:
                     return str(self.coordinates)
                 
