@@ -1,4 +1,4 @@
-import tkinter
+import tkinter, os, assets
 
 class WindowHandler(tkinter.Tk):
         
@@ -9,3 +9,10 @@ class WindowHandler(tkinter.Tk):
                 self.iconify()
             self.title(windowTitle)
             self.mainloop()
+            
+class TextInput:
+    
+    def __init__(self, randomint) -> None:
+        self.fileObj = open(assets.windowNames[randomint], 'w')
+        self.fileObj.close()
+        

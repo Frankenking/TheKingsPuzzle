@@ -77,6 +77,7 @@ class Program:
             
             while self.programRunning:
                 print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {str(self.MapObject._getDataRoomData(len(self.MapObject.map)-1))}")
+                test = puzzles.TextInput(random.randint(0, len(assets.windowNames)-1))
                 self._os('pause')
                 
         
@@ -265,7 +266,7 @@ class Program:
                     self.isCompletionRoom = False
 
                 def _generatePuzzle(self):
-                    pass
+                    self.roomType = random.randint(0, 1)
                 
                 def __str__(self) -> str:
                     return str(self.coordinates)
