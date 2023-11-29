@@ -70,3 +70,5 @@ windowNames = [
     "SABBATH",
     "SELAH"
 ]
+
+placeholder = ""

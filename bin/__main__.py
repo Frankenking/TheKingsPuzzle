@@ -23,6 +23,7 @@ class Program:
             self.programRunning:bool = self.PROGRAMVARS[0]
             
             self.menuData  = self.Menu()
+            self.userPos = "0,0"
             
             if self.menuData.hasQuit:
                 return
@@ -42,7 +43,7 @@ class Program:
             for _ in range(4):
                 print(assets.storylines[self.storylineNumber] + "\n-----------------")
                 time.sleep(1)
-                self.incStoryline()
+                self._incStoryline()
             
             passWindowName = assets.windowNames[random.randint(0, len(assets.windowNames)-1)]
             self.passWindow = self._generateThread(puzzles.WindowHandler, '0x0',  passWindowName, True)
@@ -65,11 +66,9 @@ class Program:
             self.MapObject = self.MapGenerator(self.menuData.gameSettings['difficulty'])
             
             self.formattedMap = []
-            for i in range(0, len(self.MapObject.map)):
-                self.formattedMap.append(str(self.MapObject._getDataRoomData(i)))
-                
-            print(self.formattedMap)
             
+            for i in range(len(self.MapObject.map)):
+                pass
             
             self._proc()
             
@@ -77,11 +76,69 @@ class Program:
             
             while self.programRunning:
                 print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {str(self.MapObject._getDataRoomData(len(self.MapObject.map)-1))}")
-                test = puzzles.TextInput(random.randint(0, len(assets.windowNames)-1))
-                self._os('pause')
+                print(f"\nDECISIONS\n MAP\n MOVE\n")
+                userInput = self._getUserInput()
+                userInput = userInput.lower()
                 
-        
-        def incStoryline(self) -> None: #progresses the lines that contribue to the story when called
+                match userInput:
+                    
+                    case "map":
+                        self._os("cls")
+                        print(self.formattedMap)
+                    
+                    case "move":
+                        self.Usermove()
+                    
+                    case _:
+                        print("Invalid Option")
+                
+        def Usermove(self):
+            print("Direction you wish to move Left/Right/Up/Down")
+            userInput = self._getUserInput()
+            userInput = userInput.lower()
+            
+            match userInput:
+                case "up":
+                    if self._checkValidMove(0,1):
+                        self.userPos[1] = self.userPos[1] +1
+                    else:
+                        print("Invalid Direction")
+                        
+                case "down":
+                    if self._checkValidMove(0,-1):
+                        self.userPos[1] = self.userPos[1] -1
+                    else:
+                        print("Invalid Direction")
+                        
+                case "left":
+                    if self._checkValidMove(-1,0):
+                        self.userPos[0] = self.userPos[0] -1
+                    else:
+                        print("Invalid Direction")
+                        
+                case "right":
+                    if self._checkValidMove(1,0):
+                        self.userPos[0] = self.userPos[0] +1
+                    else:
+                        print("Invalid Direction")
+                        
+                case _:
+                    self._os("cls")
+                    print("Invalid Option")
+                    return self.Usermove()
+            
+            
+        def _checkValidMove(self, x=0, y=0) -> bool:
+            
+            targetRoom = []
+            targetRoom.append(x+self.userPos[0])
+            targetRoom.append(y+self.userPos[1])
+            
+            if targetRoom[0] < 0 or targetRoom[0] > 4*self.menuData.gameSettings["difficulty"]:
+                return False
+            
+            
+        def _incStoryline(self) -> None: #progresses the lines that contribue to the story when called
             self.storylineNumber +=1
             
         def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions
@@ -255,8 +312,6 @@ class Program:
             
             def _getDataRoomData(self, roomNumber):
                 return self.map[roomNumber]
-                    
-                    
             
             class Room:
                 
@@ -264,12 +319,10 @@ class Program:
                     self.coordinates = roomCoords
                     self.roomNumber = roomN
                     self.isCompletionRoom = False
+                    self.isCompleted = False
 
                 def _generatePuzzle(self):
                     self.roomType = random.randint(0, 1)
-                
-                def __str__(self) -> str:
-                    return str(self.coordinates)
                 
 if __name__ == '__main__':
     _program = Program()
