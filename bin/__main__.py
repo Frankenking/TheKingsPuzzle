@@ -63,28 +63,37 @@ class Program:
                 self._os('pause')
                 return
 
-            self.MapObject = self.MapGenerator(self.menuData.gameSettings['difficulty'])
+            self.coordinateMap = []
+            self.mapObject = []
             
-            self.formattedMap = []
+            self.dimensions:list = self._generateDimensions(self.menuData.gameSettings['difficulty'])
             
-            for i in range(len(self.MapObject.map)):
-                pass
+            for x in range(self.dimensions[0]):
+                    for y in range(self.dimensions[1]):
+                        self.coordinateMap.append(str(x) +","+ str(y))
             
+            index = 0
+            for point in self.coordinateMap:
+                self.mapObject.append(self.Room(point, index))
+                index+=1
+                
+                
             self._proc()
             
         def _proc(self) -> None: #main runtime game loop
             
             while self.programRunning:
-                print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {str(self.MapObject._getDataRoomData(len(self.MapObject.map)-1))}")
-                print(f"\nDECISIONS\n MAP\n MOVE\n")
+                    
+                print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {self.coordinateMap[len(self.coordinateMap)-1]}")
+                print(f"\nDECISIONS\n LOCATION\n MOVE\n")
                 userInput = self._getUserInput()
                 userInput = userInput.lower()
                 
                 match userInput:
                     
-                    case "map":
+                    case "location":
                         self._os("cls")
-                        print(self.formattedMap)
+                        print(f"You are at {self.userPos}")
                     
                     case "move":
                         self.Usermove()
@@ -169,6 +178,30 @@ class Program:
         def _generateThread(self, *args):  #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc.
             return multiprocessing.Process(target=args[0], args=args[1:len(args)])
         
+        def _generateDimensions(self, difficulty) -> list:
+                x = 5*difficulty
+                y = 5*difficulty
+                return x, y
+            
+        class Room:
+                
+            def __init__(self, roomCoords, roomN) -> None:
+                self.coordinates = roomCoords
+                self.roomNumber = roomN
+                
+                if roomN == 25 or roomN == 50:
+                    self.isCompletionRoom = False
+                
+                if roomCoords == '0,0':
+                    self.isCompleted = True
+                    self.isActive = True
+                else:
+                    self.isCompleted = False
+                    self.isActive = False
+            
+            def _generatePuzzle(self):
+                self.roomType = random.randint(0, 1)
+                
         class Menu:
         
             def __init__(self)  -> None:
@@ -284,45 +317,6 @@ class Program:
             def _os(self, cmd):
                 os.system(cmd)
             
-        class MapGenerator:
-            
-            def __init__(self, difficulty) -> None:
-                
-                self.dimensions:list = self._generateDimensions(difficulty)
-                self.map = []
-                for x in range(self.dimensions[0]):
-                    for y in range(self.dimensions[1]):
-                        self.map.append(str(x) +","+ str(y))
-                
-                completionRoomNumber = len(self.map)
-                count = 0
-                for room in self.map:
-                    room = self.Room(room, count)
-                    if count == completionRoomNumber:
-                        room.isCompletionRoom = True
-                        
-                    self.map[count] = room
                     
-                    count +=1
-                    
-            def _generateDimensions(self, difficulty) -> list:
-                x = 5*difficulty
-                y = 5*difficulty
-                return x, y
-            
-            def _getDataRoomData(self, roomNumber):
-                return self.map[roomNumber]
-            
-            class Room:
-                
-                def __init__(self, roomCoords, roomN) -> None:
-                    self.coordinates = roomCoords
-                    self.roomNumber = roomN
-                    self.isCompletionRoom = False
-                    self.isCompleted = False
-
-                def _generatePuzzle(self):
-                    self.roomType = random.randint(0, 1)
-                
 if __name__ == '__main__':
     _program = Program()
