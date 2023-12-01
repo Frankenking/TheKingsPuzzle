@@ -77,7 +77,10 @@ class Program:
                 self.mapObject.append(self.Room(point, index))
                 index+=1
                 
-                
+            self._roomAtrSet(24, 0, True)
+            self._roomAtrSet(0, 1, True)
+            self._roomAtrSet(0, 2, True)
+            
             self._proc()
             
         def _proc(self) -> None: #main runtime game loop
@@ -100,7 +103,9 @@ class Program:
                     
                     case _:
                         print("Invalid Option")
+            
                 
+        
         def Usermove(self):
             print("Direction you wish to move Left/Right/Up/Down")
             userInput = self._getUserInput()
@@ -136,7 +141,14 @@ class Program:
                     print("Invalid Option")
                     return self.Usermove()
             
-            
+            for room in self.mapObject:
+                if getattr(room, 'coordinates') == self.userPos:
+                    if room is not getattr(room, 'isCompleted'):
+                        self._instancePuzzle(room)
+        
+        def _instancePuzzle(self, room):
+            pass   
+        
         def _checkValidMove(self, x=0, y=0) -> bool:
             
             targetRoom = []
@@ -146,7 +158,20 @@ class Program:
             if targetRoom[0] < 0 or targetRoom[0] > 4*self.menuData.gameSettings["difficulty"]:
                 return False
             
+        
+        def _roomAtrSet(self, roomnumber, type, val):
             
+            match type:
+                
+                case 0:
+                    setattr(self.mapObject[roomnumber], 'isCompletionRoom', val)
+                
+                case 1:
+                    setattr(self.mapObject[roomnumber], 'isCompleted', val)
+                
+                case 2:
+                    setattr(self.mapObject[roomnumber], 'isActive', val)
+          
         def _incStoryline(self) -> None: #progresses the lines that contribue to the story when called
             self.storylineNumber +=1
             
@@ -188,19 +213,12 @@ class Program:
             def __init__(self, roomCoords, roomN) -> None:
                 self.coordinates = roomCoords
                 self.roomNumber = roomN
-                
-                if roomN == 25 or roomN == 50:
-                    self.isCompletionRoom = False
-                
-                if roomCoords == '0,0':
-                    self.isCompleted = True
-                    self.isActive = True
-                else:
-                    self.isCompleted = False
-                    self.isActive = False
+                self.isCompletionRoom = False
+                self.isCompleted = False
+                self.isActive = False
             
             def _generatePuzzle(self):
-                self.roomType = random.randint(0, 1)
+                self.roomType = random.randint(0, 10)
                 
         class Menu:
         
