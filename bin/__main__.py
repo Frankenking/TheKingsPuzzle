@@ -23,7 +23,7 @@ class Program:
             self.programRunning:bool = self.PROGRAMVARS[0]
             
             self.menuData  = self.Menu()
-            self.userPos = "0,0"
+            self.userPos = [0,0]
             
             if self.menuData.hasQuit:
                 return
@@ -77,9 +77,9 @@ class Program:
                 self.mapObject.append(self.Room(point, index))
                 index+=1
                 
-            self._roomAtrSet(24, 0, True)
-            self._roomAtrSet(0, 1, True)
-            self._roomAtrSet(0, 2, True)
+            self._roomAtrSet(24, 'cr', True)
+            self._roomAtrSet(0, 'c', True)
+            self._roomAtrSet(0, 'a', True)
             
             self._proc()
             
@@ -111,30 +111,38 @@ class Program:
             userInput = self._getUserInput()
             userInput = userInput.lower()
             
+            for room in self.mapObject:
+                if getattr(room, 'coordinates') == self.userPos:
+                    self._roomAtrSet(getattr(room, 'coordinates'), 'a', False)
+                    
             match userInput:
                 case "up":
                     if self._checkValidMove(0,1):
                         self.userPos[1] = self.userPos[1] +1
                     else:
                         print("Invalid Direction")
+                        return
                         
                 case "down":
                     if self._checkValidMove(0,-1):
                         self.userPos[1] = self.userPos[1] -1
                     else:
                         print("Invalid Direction")
+                        return
                         
                 case "left":
                     if self._checkValidMove(-1,0):
                         self.userPos[0] = self.userPos[0] -1
                     else:
                         print("Invalid Direction")
+                        return
                         
                 case "right":
                     if self._checkValidMove(1,0):
                         self.userPos[0] = self.userPos[0] +1
                     else:
                         print("Invalid Direction")
+                        return
                         
                 case _:
                     self._os("cls")
@@ -145,9 +153,11 @@ class Program:
                 if getattr(room, 'coordinates') == self.userPos:
                     if room is not getattr(room, 'isCompleted'):
                         self._instancePuzzle(room)
+                        print(room, getattr(room, 'coordinates'), self.userPos)
         
         def _instancePuzzle(self, room):
-            pass   
+            print("Puzzle Instanced")
+            puzzleid = getattr(room, 'roomType')   
         
         def _checkValidMove(self, x=0, y=0) -> bool:
             
@@ -155,22 +165,23 @@ class Program:
             targetRoom.append(x+self.userPos[0])
             targetRoom.append(y+self.userPos[1])
             
-            if targetRoom[0] < 0 or targetRoom[0] > 4*self.menuData.gameSettings["difficulty"]:
+            print(targetRoom)
+            
+            if targetRoom[0] < 0 or targetRoom[0] > 4*self.menuData.gameSettings["difficulty"] or targetRoom[1] < 0 or targetRoom[1] > 4*self.menuData.gameSettings["difficulty"]:
                 return False
+            else:
+                return True
             
         
         def _roomAtrSet(self, roomnumber, type, val):
             
             match type:
                 
-                case 0:
+                case 'cR':
                     setattr(self.mapObject[roomnumber], 'isCompletionRoom', val)
                 
-                case 1:
+                case 'c':
                     setattr(self.mapObject[roomnumber], 'isCompleted', val)
-                
-                case 2:
-                    setattr(self.mapObject[roomnumber], 'isActive', val)
           
         def _incStoryline(self) -> None: #progresses the lines that contribue to the story when called
             self.storylineNumber +=1
@@ -211,14 +222,15 @@ class Program:
         class Room:
                 
             def __init__(self, roomCoords, roomN) -> None:
+                
                 self.coordinates = roomCoords
                 self.roomNumber = roomN
                 self.isCompletionRoom = False
                 self.isCompleted = False
-                self.isActive = False
+                self.roomType = random.randint(0, 10)
             
             def _generatePuzzle(self):
-                self.roomType = random.randint(0, 10)
+                pass
                 
         class Menu:
         
