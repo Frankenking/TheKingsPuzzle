@@ -3,7 +3,7 @@
 import assets, puzzles
 
 #py imports
-import os, multiprocessing, time, random, math
+import os, multiprocessing, time, random, math, tkinter
 
 
 class Program:
@@ -45,7 +45,7 @@ class Program:
                 time.sleep(1)
                 self._incStoryline()
             
-            passWindowName = assets.windowNames[random.randint(0, len(assets.windowNames)-1)]
+            passWindowName = assets.names[random.randint(0, len(assets.names)-1)]
             self.passWindow = self._generateThread(puzzles.WindowHandler, '0x0',  passWindowName, True)
             self.passWindow.start()
             
@@ -149,15 +149,31 @@ class Program:
                     print("Invalid Option")
                     return self.Usermove()
             
+            pos = f"{self.userPos[0]},{self.userPos[1]}"
             for room in self.mapObject:
-                if getattr(room, 'coordinates') == self.userPos:
-                    if room is not getattr(room, 'isCompleted'):
+                
+                print(room, getattr(room, 'coordinates'), self.userPos)
+                if getattr(room, 'coordinates') == pos:
+                    if False == getattr(room, 'isCompleted'):
                         self._instancePuzzle(room)
-                        print(room, getattr(room, 'coordinates'), self.userPos)
+
         
         def _instancePuzzle(self, room):
+            
             print("Puzzle Instanced")
-            puzzleid = getattr(room, 'roomType')   
+            puzzleid = getattr(room, 'roomType')
+            
+            match puzzleid:
+                
+                case 0:
+                    name = assets.names[random.randint(0, len(assets.names)-1)]
+                    roomPuzzle = self._generateThread(puzzles.TextInput, name, puzzleid)
+                    roomPuzzle.start()
+                    
+                    infoBoxes = self._generateThread(puzzles.Message, name)
+                    infoBoxes.start()
+                    
+                        
         
         def _checkValidMove(self, x=0, y=0) -> bool:
             
@@ -227,10 +243,7 @@ class Program:
                 self.roomNumber = roomN
                 self.isCompletionRoom = False
                 self.isCompleted = False
-                self.roomType = random.randint(0, 10)
-            
-            def _generatePuzzle(self):
-                pass
+                self.roomType = 0 # replace randint after testing
                 
         class Menu:
         
