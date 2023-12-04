@@ -25,7 +25,7 @@ class Message(tkinter.Tk):
         listname = []
         for i in characters:
             listname.append(i)
-        listname = listname[:-1] #INVERT
+        listname = listname[::-1] #INVERT
         
         for element in listname:
             time.sleep(5)
@@ -40,33 +40,30 @@ class TextInput:
         self.fileObj = open(name, 'w')
         match type:
             case 0:
-                complete = self.namePuzzle(name)
-                return complete
+                self.namePuzzle(name)
                 
     def namePuzzle(self, name):
         
-        self.fileObj.write("The answer to this puzzle requires an input of text into it when you think you have the answer delete all this writing and replace it with your awnser and wait")
+        self.fileObj.write("The answer to this puzzle requires an input of text into it when you think you have the answer type it into the terminal")
         self.fileObj.close()
         
-        self.fileObj = open(name, 'r')
-        print(name)
         
         listname = []
         for i in name:
             listname.append(i)
-        listname = listname[:-1] #INVERT
-        print(listname)
+        listname = listname[::-1] #INVERT
+        
         nameinv = ''.join(listname)
+        
         while True:
+            self.fileObj = open(name, 'r')
             data = self.fileObj.read() #APPLY
-            print(data, nameinv)
             if data == nameinv:
-                print("suc")
+                self.fileObj.close()
                 break
-            print("Inc")
+            self.fileObj.close()
             time.sleep(1)
         
         os.remove(name)
-        return True
             
         

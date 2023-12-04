@@ -79,7 +79,6 @@ class Program:
                 
             self._roomAtrSet(24, 'cr', True)
             self._roomAtrSet(0, 'c', True)
-            self._roomAtrSet(0, 'a', True)
             
             self._proc()
             
@@ -110,10 +109,6 @@ class Program:
             print("Direction you wish to move Left/Right/Up/Down")
             userInput = self._getUserInput()
             userInput = userInput.lower()
-            
-            for room in self.mapObject:
-                if getattr(room, 'coordinates') == self.userPos:
-                    self._roomAtrSet(getattr(room, 'coordinates'), 'a', False)
                     
             match userInput:
                 case "up":
@@ -152,10 +147,10 @@ class Program:
             pos = f"{self.userPos[0]},{self.userPos[1]}"
             for room in self.mapObject:
                 
-                print(room, getattr(room, 'coordinates'), self.userPos)
                 if getattr(room, 'coordinates') == pos:
                     if False == getattr(room, 'isCompleted'):
                         self._instancePuzzle(room)
+                        self._roomAtrSet(room, "c", True)
 
         
         def _instancePuzzle(self, room):
@@ -173,6 +168,18 @@ class Program:
                     infoBoxes = self._generateThread(puzzles.Message, name)
                     infoBoxes.start()
                     
+                    while True:
+                        userInp = self._getUserInput()
+                        if userInp == name:
+                                infoBoxes.terminate()
+                                self._os("cls")
+                                print("----------------Room Completed!----------------")
+                                break
+                        else:
+                            print("Wrong")
+                            
+                        
+                            
                         
         
         def _checkValidMove(self, x=0, y=0) -> bool:
