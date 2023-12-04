@@ -158,21 +158,75 @@ class Program:
             print("Puzzle Instanced")
             puzzleid = getattr(room, 'roomType')
             
+            name = assets.names[random.randint(0, len(assets.names)-1)]
+            
             match puzzleid:
                 
+                #PUZZLE ONE
                 case 0:
-                    name = assets.names[random.randint(0, len(assets.names)-1)]
                     
                     
-                    infoBoxes = self._generateThread(puzzles.Message, name)
-                    infoBoxes.start()
+                    if self.menuData.gameSettings["difficulty"] != 2:
+                        infoBoxes = self._generateThread(puzzles.Message, name)
+                        infoBoxes.start()
                     
                     roomPuzzle = puzzles.TextInput(name, puzzleid)
                     if infoBoxes.is_alive():
                         infoBoxes.terminate()
-                    self._os("cls")
-                    print("----------------Room Completed!----------------")
                     
+                case 1:
+                    
+                    roomPuzzle = puzzles.TextInput(name, puzzleid, random.randint(0, 25))
+                
+                case 2:
+                    pass
+                
+                case 3:
+                    pass
+                
+                case 4:
+                    pass
+                
+                case 5:
+                    pass
+                
+                case 6:
+                    pass
+                
+                case 7:
+                    pass
+                
+                case 8:
+                    pass
+                
+                case 9:
+                    pass
+                
+                case 10:
+                    pass
+                
+                case 11:
+                    pass
+                
+                case 12:
+                    pass
+                
+                case 13:
+                    pass
+                
+                case 14:
+                    pass
+                
+                case 15:
+                    pass
+                
+                case _:
+                    print("Fatal Exception")
+                    raise Exception
+                
+            self._os("cls")
+            print("----------------Room Completed!----------------")
+            
         def _checkValidMove(self, x=0, y=0) -> bool:
             
             targetRoom = []
@@ -241,7 +295,8 @@ class Program:
                 self.roomNumber = roomN
                 self.isCompletionRoom = False
                 self.isCompleted = False
-                self.roomType = 0 # replace randint after testing
+                #self.roomType = random.randint(0, 15)
+                self.roomType = 1 # delete after testing
                 
         class Menu:
         

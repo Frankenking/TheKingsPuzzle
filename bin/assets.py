@@ -1,5 +1,5 @@
 storylines:list[str] = [
-    "Welcome to the King's Puzzle!",
+    "Welcome to the Puzzle!",
     "I hope you are up to the challenge,",
     "Before you can enter,",
     "What is the pass  phrase?",
