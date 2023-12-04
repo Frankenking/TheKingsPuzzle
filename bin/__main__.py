@@ -150,7 +150,7 @@ class Program:
                 if getattr(room, 'coordinates') == pos:
                     if False == getattr(room, 'isCompleted'):
                         self._instancePuzzle(room)
-                        self._roomAtrSet(room, "c", True)
+                        self._roomAtrSet(getattr(room, 'roomNumber'), "c", True)
 
         
         def _instancePuzzle(self, room):
@@ -162,26 +162,17 @@ class Program:
                 
                 case 0:
                     name = assets.names[random.randint(0, len(assets.names)-1)]
-                    roomPuzzle = self._generateThread(puzzles.TextInput, name, puzzleid)
-                    roomPuzzle.start()
+                    
                     
                     infoBoxes = self._generateThread(puzzles.Message, name)
                     infoBoxes.start()
                     
-                    while True:
-                        userInp = self._getUserInput()
-                        if userInp == name:
-                                infoBoxes.terminate()
-                                self._os("cls")
-                                print("----------------Room Completed!----------------")
-                                break
-                        else:
-                            print("Wrong")
-                            
-                        
-                            
-                        
-        
+                    roomPuzzle = puzzles.TextInput(name, puzzleid)
+                    if infoBoxes.is_alive():
+                        infoBoxes.terminate()
+                    self._os("cls")
+                    print("----------------Room Completed!----------------")
+                    
         def _checkValidMove(self, x=0, y=0) -> bool:
             
             targetRoom = []

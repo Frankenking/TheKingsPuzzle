@@ -47,22 +47,19 @@ class TextInput:
         self.fileObj.write("The answer to this puzzle requires an input of text into it when you think you have the answer type it into the terminal")
         self.fileObj.close()
         
-        
         listname = []
         for i in name:
             listname.append(i)
         listname = listname[::-1] #INVERT
-        
-        nameinv = ''.join(listname)
+        invname = ''.join(listname)
         
         while True:
-            self.fileObj = open(name, 'r')
-            data = self.fileObj.read() #APPLY
-            if data == nameinv:
-                self.fileObj.close()
+            userInp = input("Answer: ")
+            if userInp == invname:
                 break
-            self.fileObj.close()
-            time.sleep(1)
+            else:
+                os.system("cls")
+                print("Wrong")
         
         os.remove(name)
             
