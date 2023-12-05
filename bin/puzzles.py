@@ -28,7 +28,7 @@ class Message(tkinter.Tk):
         listname = listname[::-1] #INVERT
         
         for element in listname:
-            time.sleep(5)
+            time.sleep(60)
             messagebox.showinfo(" ", element)
             
         self.quit()
@@ -37,7 +37,6 @@ class Message(tkinter.Tk):
 class TextInput:
     
     def __init__(self, name, type = None, *args) -> None:
-        self.fileObj = open(name, 'w')
         match type:
             case 0:
                 self.reversePuzzle(name)
@@ -47,7 +46,7 @@ class TextInput:
     def cypherPuzzle(self, name, key):
         
         alphabet = list(string.ascii_lowercase)
-        alphabet = alphabet + alphabet
+        
         i=0
         letterindecies = []
         for x in name:
@@ -56,11 +55,24 @@ class TextInput:
                     letterindecies.append(i)
                 i +=1
             i=0
-        encrypted =
         
+        alphabet = alphabet + alphabet
+        encrypted = []
+        for x in letterindecies:
+            encrypted.append(alphabet[x+key])
+        
+        while True:
+            print(f"You are given a set of characters, '{''.join(encrypted)}', and then a number then a letter 1:{name[0]}")
+            if input("Answer: ") == name:
+                break
+            else:
+                os.system("cls")
+                print("Wrong")
+            
     
     def reversePuzzle(self, name):
         
+        self.fileObj = open(name, 'w')
         self.fileObj.write("The answer to this puzzle requires an input of text into the terminal relating to the file, when you think you have the answer type it into the terminal")
         self.fileObj.close()
         

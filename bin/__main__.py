@@ -102,8 +102,6 @@ class Program:
                     
                     case _:
                         print("Invalid Option")
-            
-                
         
         def Usermove(self):
             print("Direction you wish to move Left/Right/Up/Down")
@@ -296,7 +294,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = 1 # delete after testing
+                self.roomType = random.randint(0, 1) # delete after testing
                 
         class Menu:
         
