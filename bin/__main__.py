@@ -76,8 +76,12 @@ class Program:
             for point in self.coordinateMap:
                 self.mapObject.append(self.Room(point, index))
                 index+=1
-                
-            self._roomAtrSet(24, 'cr', True)
+            
+            if self.menuData.gameSettings["difficulty"] != 1:
+                self._roomAtrSet((len(self.mapObject)*2)-1, 'cr', True)
+            else:
+                 self._roomAtrSet(len(self.mapObject)-1, 'cr', True)
+                 
             self._roomAtrSet(0, 'c', True)
             
             self._proc()
@@ -85,7 +89,8 @@ class Program:
         def _proc(self) -> None: #main runtime game loop
             
             while self.programRunning:
-                    
+                
+                
                 print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {self.coordinateMap[len(self.coordinateMap)-1]}")
                 print(f"\nDECISIONS\n LOCATION\n MOVE\n")
                 userInput = self._getUserInput()
@@ -149,7 +154,9 @@ class Program:
                     if False == getattr(room, 'isCompleted'):
                         self._instancePuzzle(room)
                         self._roomAtrSet(getattr(room, 'roomNumber'), "c", True)
-
+                        
+                        if getattr(room, "isCompletionRoom"):
+                            print("You won")
         
         def _instancePuzzle(self, room):
             
