@@ -3,7 +3,7 @@
 import assets, puzzles
 
 #py imports
-import os, multiprocessing, time, random, math, tkinter
+import os, multiprocessing, time, random
 
 
 class Program:
