@@ -3,24 +3,18 @@
 import assets, puzzles
 
 #py imports
-import os, multiprocessing, time, random
+import os, multiprocessing, time, random, threading, trace
 
 
 class Program:
     
     def __init__(self) -> None:
-        
-        self.programRunning = True
 
-        self.Game(self.programRunning)
+        _game = self.Game()
         
     class Game:
         
-        def __init__(self, *args) -> None:
-            
-            self.PROGRAMVARS = args
-            
-            self.programRunning:bool = self.PROGRAMVARS[0]
+        def __init__(self) -> None:
             
             self.menuData  = self.Menu()
             self.userPos = [0,0]
@@ -51,7 +45,6 @@ class Program:
             
             
             if self._getUserInput() == passWindowName:
-                self.passWindow.terminate()
                 print(assets.storylines[self.storylineNumber] + "\n------------------")
                 self._os('pause')
                 self._os('cls')
@@ -88,7 +81,7 @@ class Program:
             
         def _proc(self) -> None: #main runtime game loop
             
-            while self.programRunning:
+            while True:
                 
                 
                 print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {self.coordinateMap[len(self.coordinateMap)-1]}")
@@ -172,7 +165,7 @@ class Program:
                     
                     
                     if self.menuData.gameSettings["difficulty"] != 2:
-                        infoBoxes = self._generateThread(puzzles.Message, name)
+                        infoBoxes = self._generateProc(puzzles.Message, name)
                         infoBoxes.start()
                     
                     roomPuzzle = puzzles.TextInput(name, puzzleid)
@@ -284,8 +277,11 @@ class Program:
         def _os(self, cmd):
                 os.system(cmd)
         
-        def _generateThread(self, *args):  #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc.
+        def _generateProc(self, *args):  #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc.
             return multiprocessing.Process(target=args[0], args=args[1:len(args)])
+        
+        def _generateThread(self, *args):
+            return threading.Thread(target=args[0], args=args[1:len(args)])
         
         def _generateDimensions(self, difficulty) -> list:
                 x = 5*difficulty
@@ -301,7 +297,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(0, 1) # delete after testing
+                self.roomType = random.randint(1, 1) # delete after testing
                 
         class Menu:
         
@@ -417,8 +413,5 @@ class Program:
             
             def _os(self, cmd):
                 os.system(cmd)
-            
-                    
-if __name__ == '__main__':
-    
-    _program = Program()
+
+_program = Program()

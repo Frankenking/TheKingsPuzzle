@@ -1,4 +1,4 @@
-import tkinter, os, assets, time, string
+import tkinter, os, time
 from tkinter import messagebox
 
 class WindowHandler(tkinter.Tk):
@@ -46,13 +46,15 @@ class TextInput:
     def cypherPuzzle(self, name, key):
         
         encrypted = ""
- 
         for i in range(len(name)):
-            char = encrypted[i]
+            char = name[i]
+            
+            # Encrypt lowercase characters
+
             encrypted += chr((ord(char) + key - 97) % 26 + 97)
         
         while True:
-            print(f"You are given a set of characters, '{''.join(encrypted)}', and then a number then a letter 1:{name[0]}")
+            print(f"You are given a set of characters, '{''.join(encrypted)}', and then a number {key}")
             if input("Answer: ") == name:
                 break
             else:
