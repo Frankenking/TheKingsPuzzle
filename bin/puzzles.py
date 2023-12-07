@@ -45,21 +45,11 @@ class TextInput:
                 
     def cypherPuzzle(self, name, key):
         
-        alphabet = list(string.ascii_lowercase)
-        
-        i=0
-        letterindecies = []
-        for x in name:
-            for y in alphabet:
-                if x == y:
-                    letterindecies.append(i)
-                i +=1
-            i=0
-        
-        alphabet = alphabet + alphabet
-        encrypted = []
-        for x in letterindecies:
-            encrypted.append(alphabet[x+key])
+        encrypted = ""
+ 
+        for i in range(len(name)):
+            char = encrypted[i]
+            encrypted += chr((ord(char) + key - 97) % 26 + 97)
         
         while True:
             print(f"You are given a set of characters, '{''.join(encrypted)}', and then a number then a letter 1:{name[0]}")
