@@ -34,20 +34,17 @@ class Program:
         
         def _start(self):
             
-            for _ in range(4):
+            for _ in range(5):
                 print(assets.storylines[self.storylineNumber] + "\n-----------------")
                 time.sleep(1)
                 self._incStoryline()
             
             passWindowName = assets.names[random.randint(0, len(assets.names)-1)]
-            self.passWindow = self._generateThread(puzzles.WindowHandler, '0x0',  passWindowName, True)
-            self.passWindow.start()
+            self.passWindow = puzzles.passwordWindow('100x100',  passWindowName, True)
             
-            if self._getUserInput() == passWindowName:
-                setattr(self.passWindow, "_is_stopped", True)
+            if self.passWindow.passed:
                 
                 print(assets.storylines[self.storylineNumber] + "\n------------------")
-                print(f"Make sure to close the '{passWindowName}' window")
                 self._os('pause')
                 self._os('cls')
 

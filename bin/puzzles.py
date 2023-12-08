@@ -3,17 +3,31 @@ from tkinter import messagebox
 
 #death to the threads
 
-class WindowHandler(tkinter.Tk):
+class passwordWindow(tkinter.Tk):
         
         def __init__(self, windowGeometry="0x0", windowTitle="None", iconifyWindow = False, widgets:list = [None]) -> None:
             super().__init__()
+            self.passed = False
+            self.titleName = windowTitle
             self.geometry(windowGeometry)
             if iconifyWindow:
                 self.iconify()
             self.title(windowTitle)
             
+            self.textAnswer = tkinter.StringVar(self)
+            self.entry = tkinter.Entry(self, textvariable=self.textAnswer)
+            self.entry.pack()
+            
+            self.submitButton = tkinter.Button(self, text="Submit Answer", command=self.submit)
+            self.submitButton.place(x=0, y=50)
             self.mainloop()
-    
+
+        def submit(self):
+            
+            if self.textAnswer.get() == self.titleName:
+                self.passed = True
+                self.destroy()
+                
 class TextInput:
     
     def __init__(self, name, puzzleid = None, *args) -> None:
@@ -81,22 +95,20 @@ class TextInput:
         while True:
             
             fileExists = os.path.isfile(f"{os.getcwd()}\\{name[i]}")
-            print(f"{os.getcwd()}\\{name[i]}")
-            
-            if i == len(name):
-                break
             
             if fileExists == False:
                 
                 i+=1
+                
+                if i == len(name):
+                    return
+                
                 self.fileObj = open(name[i], "w")
                 self.fileObj.close()
                 
                 
 
             time.sleep(0.5)
-            
-            return
         
     def cypherPuzzle(self, name, key):
         

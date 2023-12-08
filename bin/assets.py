@@ -3,6 +3,7 @@ storylines:list[str] = [
     "I hope you are up to the challenge,",
     "Before you can enter,",
     "What is the pass  phrase?",
+    "You only Have 1 Guess...",
     "You are quite clever..."
 ]
 
