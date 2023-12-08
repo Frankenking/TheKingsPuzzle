@@ -1,11 +1,11 @@
-import tkinter, os, time
+import tkinter, os, time, threading
 from tkinter import messagebox
 
 #death to the threads
 
 class passwordWindow(tkinter.Tk):
         
-        def __init__(self, windowGeometry="0x0", windowTitle="None", iconifyWindow = False, widgets:list = [None]) -> None:
+        def __init__(self, windowGeometry="0x0", windowTitle="None", iconifyWindow = False) -> None:
             super().__init__()
             self.passed = False
             self.titleName = windowTitle
@@ -27,8 +27,50 @@ class passwordWindow(tkinter.Tk):
             if self.textAnswer.get() == self.titleName:
                 self.passed = True
                 self.destroy()
+
+class bombMinigame(tkinter.Tk):
+    
+    def __init__(self, wire, wires) -> None:
+        super().__init__()
+        
+        self.wires = wires
+        self.wire = wire
+        self.passed = False
+        self.geometry("100x100")
+        self.title("This is a bomb")
+        
+        for i in wires:
+            fileObj = open(i, "w")
+            fileObj.close()
+            
+        self.countdown = threading.Thread(target=self.timer)
+        
+            
+        wireName = tkinter.Label(self, text=wire)
+        wireName.pack()
+        
+        self.mainloop()
+        
+    def timer(self):
+        
+        for i in range(0, 30):
+            
+            for g in range(0,4):
                 
-class TextInput:
+                fileExists = os.path.isfile(f"{os.getcwd()}\\{self.wires[g]}")
+                
+                if fileExists == False and self.wires[g] == self.wire:
+                    self.passed = True
+                    self.destroy()
+                    
+                elif fileExists == False:
+                    break
+            
+            messagebox.showinfo("You have", message=f"{30-i} seconds left")
+            time.sleep(1)
+        
+        self.destroy()
+class puzzleHandler:
     
     def __init__(self, name, puzzleid = None, *args) -> None:
         
@@ -47,8 +89,9 @@ class TextInput:
                     self.deletePuzzle(name)
                 
             case 3:
-                pass
-            
+                
+                self.bombMinigame(self, args[0], args[1])
+                passed = getattr(bombMinigame, "passed")
             case 4:
                  pass
                 
@@ -150,5 +193,7 @@ class TextInput:
                 print("Wrong")
         
         os.remove(name)
-            
+        
+    def bombMinigame(self):
+        self._bomb = bombMinigame("300x300", "This is a bomb")
         

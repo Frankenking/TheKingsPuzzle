@@ -162,15 +162,15 @@ class Program:
                 #PUZZLE ONE
                 case 0:
                     
-                    roomPuzzle = puzzles.TextInput(name, puzzleid)
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                     
                 case 1:
                     
-                    roomPuzzle = puzzles.TextInput(name, puzzleid, random.randint(0, 25))
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid, random.randint(0, 25))
                 
                 case 2:
                     
-                    roomPuzzle = self._generateThread(puzzles.TextInput, name, puzzleid)
+                    roomPuzzle = self._generateThread(puzzles.puzzleHandler, name, puzzleid)
                     roomPuzzle.start()
                     
                     while True:
@@ -189,8 +189,19 @@ class Program:
                     
                 
                 case 3:
-                    pass
-                
+                    
+                    wires = ["greenwire", "bluewire", "redwire", "yellowwire"]
+                    
+                    roomPuzzle = puzzles.puzzleHandler("", puzzleid, wires[random.randint(0,3)], wires)
+                    if roomPuzzle:
+                        pass
+                    
+                    for wireName in wires:
+                        try:
+                            os.remove(wireName)
+                        except:
+                            pass
+                    
                 case 4:
                     pass
                 
