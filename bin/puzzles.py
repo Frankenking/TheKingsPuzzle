@@ -13,29 +13,6 @@ class WindowHandler(tkinter.Tk):
             self.title(windowTitle)
             
             self.mainloop()
-
-class MessageBox(tkinter.Tk):
-    
-    def __init__(self, characters, inverse = False) -> None:
-        super().__init__()
-        
-        self.geometry("0x0")
-        self.iconify()
-        self.title("")
-        
-        listname = []
-        for i in characters:
-            listname.append(i)
-            
-        if inverse:
-            listname = listname[::-1] #INVERT
-        
-        for element in listname:
-            time.sleep(60)
-            messagebox.showinfo(" ", element)
-            
-        self.quit()
-        
     
 class TextInput:
     
@@ -104,6 +81,7 @@ class TextInput:
         while True:
             
             fileExists = os.path.isfile(f"{os.getcwd()}\\{name[i]}")
+            print(f"{os.getcwd()}\\{name[i]}")
             
             if i == len(name):
                 break
@@ -142,7 +120,7 @@ class TextInput:
     def reversePuzzle(self, name):
         
         self.fileObj = open(name, 'w')
-        self.fileObj.write("The answer to this puzzle requires an input of text into the terminal relating to the file, when you think you have the answer type it into the terminal")
+        self.fileObj.write("The answer to this puzzle requires an input of text into the terminal relating to the file, when you think you have the answer type it into the terminal,                                                                                                                                                                                                                                                                                                               Think Backwards")
         self.fileObj.close()
         
         listname = []

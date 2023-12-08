@@ -165,13 +165,7 @@ class Program:
                 #PUZZLE ONE
                 case 0:
                     
-                    
-                    infoBoxes = self._generateThread(puzzles.MessageBox, name, True)
-                    infoBoxes.start()
-                    
                     roomPuzzle = puzzles.TextInput(name, puzzleid)
-                    if infoBoxes.is_alive():
-                        setattr(self.passWindow, "_is_stopped", True)
                     
                 case 1:
                     
