@@ -53,6 +53,19 @@ userFailureLines  = [
 ]
 
 names = [
+    "lush",
+    "letters",
+    "crash",
+    "blink",
+    "drain",
+    "inject",
+    "piquant",
+    "nest",
+    "teeth",
+    "limit",
+    "mundane",
+    "boat",
+    "fall",
     "exodus",
     "blessing",
     "disciple",

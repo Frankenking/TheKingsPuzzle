@@ -3,7 +3,7 @@
 import assets, puzzles
 
 #py imports
-import os, multiprocessing, time, random, threading, trace
+import os, multiprocessing, time, random, threading
 
 
 class Program:
@@ -43,9 +43,11 @@ class Program:
             self.passWindow = self._generateThread(puzzles.WindowHandler, '0x0',  passWindowName, True)
             self.passWindow.start()
             
-            
             if self._getUserInput() == passWindowName:
+                setattr(self.passWindow, "_is_stopped", True)
+                
                 print(assets.storylines[self.storylineNumber] + "\n------------------")
+                print(f"Make sure to close the '{passWindowName}' window")
                 self._os('pause')
                 self._os('cls')
 
@@ -149,7 +151,7 @@ class Program:
                         self._roomAtrSet(getattr(room, 'roomNumber'), "c", True)
                         
                         if getattr(room, "isCompletionRoom"):
-                            print("You won")
+                            self._end()
         
         def _instancePuzzle(self, room):
             
@@ -164,20 +166,36 @@ class Program:
                 case 0:
                     
                     
-                    if self.menuData.gameSettings["difficulty"] != 2:
-                        infoBoxes = self._generateProc(puzzles.Message, name)
-                        infoBoxes.start()
+                    infoBoxes = self._generateThread(puzzles.MessageBox, name, True)
+                    infoBoxes.start()
                     
                     roomPuzzle = puzzles.TextInput(name, puzzleid)
                     if infoBoxes.is_alive():
-                        infoBoxes.terminate()
+                        setattr(self.passWindow, "_is_stopped", True)
                     
                 case 1:
                     
                     roomPuzzle = puzzles.TextInput(name, puzzleid, random.randint(0, 25))
                 
                 case 2:
-                    pass
+                    
+                    roomPuzzle = self._generateThread(puzzles.TextInput, name, puzzleid)
+                    roomPuzzle.start()
+                    
+                    while True:
+                        print("Answer: ")
+                        if self._getUserInput() == name:
+                            break
+                        else:
+                            self._os("cls")
+                            print("Wrong")
+                    
+                    for character in name:
+                        try:
+                            os.remove(character)
+                        except:
+                            pass
+                    
                 
                 case 3:
                     pass
@@ -224,7 +242,7 @@ class Program:
                 
             self._os("cls")
             print("----------------Room Completed!----------------")
-            
+        
         def _checkValidMove(self, x=0, y=0) -> bool:
             
             targetRoom = []
@@ -238,7 +256,6 @@ class Program:
             else:
                 return True
             
-        
         def _roomAtrSet(self, roomnumber, type, val):
             
             match type:
@@ -248,11 +265,11 @@ class Program:
                 
                 case 'c':
                     setattr(self.mapObject[roomnumber], 'isCompleted', val)
-          
+                    
         def _incStoryline(self) -> None: #progresses the lines that contribue to the story when called
             self.storylineNumber +=1
             
-        def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions
+        def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions uses a type defaulted to string to ensure no crashes if the user mistypes or tries to break the program
             
             try:
                 userInput = input("\nUser Input -->")
@@ -274,20 +291,30 @@ class Program:
                 print("Invalid Character")
                 return self._getUserInput(type)
                 
-        def _os(self, cmd):
+        def _os(self, cmd): #allows easier syntax when managing terminal command inputs, cls, dir, cd, etc.
                 os.system(cmd)
         
         def _generateProc(self, *args):  #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc.
             return multiprocessing.Process(target=args[0], args=args[1:len(args)])
         
-        def _generateThread(self, *args):
+        def _generateThread(self, *args): #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc. except its a thread 
             return threading.Thread(target=args[0], args=args[1:len(args)])
         
         def _generateDimensions(self, difficulty) -> list:
                 x = 5*difficulty
                 y = 5*difficulty
                 return x, y
-            
+        
+        
+        
+        #END FUNC-----------------------------------------------
+        def _end(self):
+            pass
+        
+        
+        
+        #ROOM CONSTRUCTOR ----------------------------------------------------------------------------------------------------------------------------------------------------
+        
         class Room:
                 
             def __init__(self, roomCoords, roomN) -> None:
@@ -297,7 +324,11 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(1, 1) # delete after testing
+                self.roomType = random.randint(0, 2)
+                
+                
+                
+        #MENU CLASS ----------------------------------------------------------------------------------------------------------------------------------------------------
                 
         class Menu:
         
@@ -305,8 +336,6 @@ class Program:
                 
                 self.gameSettings = {'seed': 0, 'difficulty':1}
                 self.hasQuit = False
-                
-                
                 
                 print(assets.ascii[0])
                 
@@ -380,7 +409,7 @@ class Program:
                         print("Invalid Request")
                         
                         
-            def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions
+            def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions uses a type defaulted to string to ensure no crashes if the user mistypes or tries to break the program
                 
                 try:
                     userInput = input("\nUser Input -->")
@@ -402,10 +431,10 @@ class Program:
                     print("Invalid Character")
                     return self._getUserInput(type)
             
-            def _load(self):
+            def _load(self): #unfinished 
                 pass
             
-            def _quit(self):
+            def _quit(self): #determines whether the user has quit or not, returns to master program instance which then ends the program
                 print("Quiting...")
                 time.sleep(1)
                 self.hasQuit = True
