@@ -3,7 +3,7 @@
 import assets, puzzles
 
 #py imports
-import os, multiprocessing, time, random, threading
+import os, multiprocessing, time, random, threading, contextlib
 
 
 class Program:
@@ -191,21 +191,22 @@ class Program:
                 case 3:
                     
                     wires = ["greenwire", "bluewire", "redwire", "yellowwire"]
+                    wireindex =random.randint(0,3)
+                    wire = wires[wireindex]
+                    roomPuzzle = puzzles.puzzleHandler("", puzzleid, wire, wires)
                     
-                    roomPuzzle = puzzles.puzzleHandler("", puzzleid, wires[random.randint(0,3)], wires)
-                    
-                    print(bool(roomPuzzle))
-                    if bool(roomPuzzle) == False:
-                        self._os("cls")
-                        print("WRONG WIRE\n\n GAME OVER", bool(roomPuzzle))
-                        self._os("pause")
-                        self._os("exit")
-                    
+        
                     for wireName in wires:
                         try:
                             os.remove(wireName)
                         except:
                             pass
+                    
+                            
+                    if getattr(roomPuzzle, "passed") == False:
+                        print("GAME OVER")
+                        self._os("pause")
+                        exit()
                     
                 case 4:
                     pass

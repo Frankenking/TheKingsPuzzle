@@ -1,7 +1,6 @@
 import tkinter, os, time, threading
 from tkinter import messagebox
 
-#death to the threads
 
 class passwordWindow(tkinter.Tk):
         
@@ -29,7 +28,7 @@ class passwordWindow(tkinter.Tk):
             
             self.destroy()
 
-class bombPuzzle(tkinter.Tk):
+class bombPuzzle:
     
     def __init__(self, wire, wires) -> None:
         super().__init__()
@@ -37,45 +36,38 @@ class bombPuzzle(tkinter.Tk):
         self.wires = wires
         self.wire = wire
         self.passed = False
-        self.geometry("100x100")
-        self.title("This is a bomb")
+        messagebox.showinfo("", f"cut the {self.wire}")
         
         for i in wires:
             fileObj = open(i, "w")
             fileObj.close()
-            
-        self.countdown = threading.Thread(target=self.timer)
-        self.countdown.start()
-            
-        wireName = tkinter.Label(self, text=wire)
-        wireName.pack()
         
-        self.mainloop()
-        
-    def timer(self):
-        
-        for i in range(0, 30):
+        for i in range(0, 10):
             
             for g in range(0,4):
                 
                 fileExists = os.path.isfile(f"{os.getcwd()}\\{self.wires[g]}")
                 
                 if fileExists == False and self.wires[g] == self.wire:
+                    print("nex, iswire, Check Passed")
                     self.passed = True
-                    self.destroy()
                     return
                     
                 elif fileExists == False:
-                    break
+                    self.passed = False
+                    return
             
-            print("You have", message=f"{30-i} seconds left")
+            print(f"{30-i} seconds left")
             time.sleep(1)
+        
+        self.passed = False
         
         
 class puzzleHandler:
     
     def __init__(self, name, puzzleid = None, *args) -> None:
         
+        self.fileToDelete = ""
         self.passed = False
         
         match puzzleid:
@@ -95,7 +87,6 @@ class puzzleHandler:
             case 3:
                 
                 self.bombMinigame(args[0], args[1])
-                self.passed = getattr(self._bomb, "passed")
                 
             case 4:
                  pass
@@ -200,8 +191,9 @@ class puzzleHandler:
         os.remove(name)
         
     def bombMinigame(self, wire, wires):
-        self._bomb = bombPuzzle(wire, wires)
         
-    def __str__(self) -> str:
-        return str(self.passed)
+        self.passed = False
+        self._bomb = bombPuzzle(wire, wires)
+        self.passed = self._bomb.passed
+
         
