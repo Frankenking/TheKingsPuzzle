@@ -26,9 +26,10 @@ class passwordWindow(tkinter.Tk):
             
             if self.textAnswer.get() == self.titleName:
                 self.passed = True
-                self.destroy()
+            
+            self.destroy()
 
-class bombMinigame(tkinter.Tk):
+class bombPuzzle(tkinter.Tk):
     
     def __init__(self, wire, wires) -> None:
         super().__init__()
@@ -44,7 +45,7 @@ class bombMinigame(tkinter.Tk):
             fileObj.close()
             
         self.countdown = threading.Thread(target=self.timer)
-        
+        self.countdown.start()
             
         wireName = tkinter.Label(self, text=wire)
         wireName.pack()
@@ -62,17 +63,20 @@ class bombMinigame(tkinter.Tk):
                 if fileExists == False and self.wires[g] == self.wire:
                     self.passed = True
                     self.destroy()
+                    return
                     
                 elif fileExists == False:
                     break
             
-            messagebox.showinfo("You have", message=f"{30-i} seconds left")
+            print("You have", message=f"{30-i} seconds left")
             time.sleep(1)
         
-        self.destroy()
+        
 class puzzleHandler:
     
     def __init__(self, name, puzzleid = None, *args) -> None:
+        
+        self.passed = False
         
         match puzzleid:
             
@@ -86,12 +90,13 @@ class puzzleHandler:
                 
             case 2:
                     
-                    self.deletePuzzle(name)
+                self.deletePuzzle(name)
                 
             case 3:
                 
-                self.bombMinigame(self, args[0], args[1])
-                passed = getattr(bombMinigame, "passed")
+                self.bombMinigame(args[0], args[1])
+                self.passed = getattr(self._bomb, "passed")
+                
             case 4:
                  pass
                 
@@ -194,6 +199,9 @@ class puzzleHandler:
         
         os.remove(name)
         
-    def bombMinigame(self):
-        self._bomb = bombMinigame("300x300", "This is a bomb")
+    def bombMinigame(self, wire, wires):
+        self._bomb = bombPuzzle(wire, wires)
+        
+    def __str__(self) -> str:
+        return str(self.passed)
         

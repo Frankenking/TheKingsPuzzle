@@ -193,8 +193,13 @@ class Program:
                     wires = ["greenwire", "bluewire", "redwire", "yellowwire"]
                     
                     roomPuzzle = puzzles.puzzleHandler("", puzzleid, wires[random.randint(0,3)], wires)
-                    if roomPuzzle:
-                        pass
+                    
+                    print(bool(roomPuzzle))
+                    if bool(roomPuzzle) == False:
+                        self._os("cls")
+                        print("WRONG WIRE\n\n GAME OVER", bool(roomPuzzle))
+                        self._os("pause")
+                        self._os("exit")
                     
                     for wireName in wires:
                         try:
@@ -326,7 +331,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(0, 2)
+                self.roomType = random.randint(3,3)
                 
                 
                 
