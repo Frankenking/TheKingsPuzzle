@@ -136,19 +136,21 @@ class puzzleHandler:
         
         while True:
             
-            print("Type flip to flip a coin")
+            print("Type flip to flip a coin, you must flip heads to win")
             userInput = input("Flip a coin: ")
             userInput = userInput.lower()
             
             try:
-                fileobj = open(name, "r")
-                data = int(fileobj.read)
+                fileobj = open(f"{os.getcwd()}\\{name}", "r")
+                data = int(fileobj.read())
             except:
                 print("dont type words please")
                 userInput = ""
+                fileobj.close()
             
             if userInput == "flip":
                 if random.randint(0, 100) > data:
+                    fileobj.close()
                     os.remove(f"{os.getcwd()}\\{name}")
                     break
                 else:

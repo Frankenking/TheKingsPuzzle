@@ -324,7 +324,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(5,5)
+                self.roomType = random.randint(6,6)
                 
                 
                 
