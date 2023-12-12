@@ -1,0 +1,7 @@
+{
+    "problems.showCurrentInStatus": true,
+    "debug.allowBreakpointsEverywhere": true,
+    "debug.autoExpandLazyVariables": true,
+    "debug.console.acceptSuggestionOnEnter": "on",
+    "debug.console.closeOnEnd": false
+}

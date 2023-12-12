@@ -85,12 +85,15 @@ class Program:
                 self.mapObject.append(self.Room(point, index))
                 index+=1
             
-            #ithis just sets the room that the player must get to to win depending on the difficulty
-            if self.menuData.gameSettings["difficulty"] != 1:
-                self._roomAtrSet((len(self.mapObject)*2)-1, 'cr', True)
-            else:
-                 self._roomAtrSet(len(self.mapObject)-1, 'cr', True)
-            
+            #this just sets the room that the player must get to to win depending on the difficulty
+            for room in self.mapObject:
+                if getattr(room, "coordinates") == "4,4":
+                    setattr(room, "isCompletionRoom", True)
+                    break
+                elif getattr(room, "coordinates") == "8,8":
+                    setattr(room, "isCompletionRoom", True)
+                    break
+                    
             #sets the first room to completed
             self._roomAtrSet(0, 'c', True)
             
@@ -179,6 +182,8 @@ class Program:
                 
                 #for every room if the room matches the current coordinates, if it is the final room you win, if not completed it starts a new random puzzle 
                 if getattr(room, 'coordinates') == pos:
+                    
+                    print(getattr(room, 'coordinates'), getattr(room, "isCompletionRoom"))
                     
                     if getattr(room, "isCompletionRoom"):
                             self._end()
@@ -363,7 +368,7 @@ class Program:
                 self.roomNumber = roomN
                 self.isCompletionRoom = False
                 self.isCompleted = False
-                #self.roomType = random.randint(0, 15)
+                #self.roomType = random.randint(0, 9)
                 self.roomType = random.randint(0,7)
                 
         #MENU CLASS ----------------------------------------------------------------------------------------------------------------------------------------------------
