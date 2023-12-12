@@ -96,6 +96,10 @@ class Program:
                     
                     case "move":
                         self.Usermove()
+                        
+                    case "seed":
+                        self._os("cls")
+                        print(self.menuData.gameSettings["seed"])
                     
                     case _:
                         print("Invalid Option")
@@ -226,23 +230,6 @@ class Program:
                 case 9:
                     pass
                 
-                case 10:
-                    pass
-                
-                case 11:
-                    pass
-                
-                case 12:
-                    pass
-                
-                case 13:
-                    pass
-                
-                case 14:
-                    pass
-                
-                case 15:
-                    pass
                 
                 case _:
                     print("Fatal Exception")
@@ -332,7 +319,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(3,3)
+                self.roomType = random.randint(0,3)
                 
                 
                 

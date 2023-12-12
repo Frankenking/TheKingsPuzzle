@@ -42,7 +42,7 @@ class bombPuzzle:
             fileObj = open(i, "w")
             fileObj.close()
         
-        for i in range(0, 10):
+        for i in range(0, 30):
             
             for g in range(0,4):
                 
@@ -106,24 +106,7 @@ class puzzleHandler:
             case 9:
                 pass
                 
-            case 10:
-                pass
-                
-            case 11:
-                pass
-                
-            case 12:
-                pass
-                
-            case 13:
-                pass
-                
-            case 14:
-                pass
-                
-            case 15:
-                pass
-    
+            
     def deletePuzzle(self, name):
         
         i=0
