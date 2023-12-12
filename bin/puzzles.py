@@ -2,7 +2,6 @@ import tkinter, os, time, threading, random
 from tkinter import messagebox
 from pynput import mouse
 
-
 class passwordWindow(tkinter.Tk):
         
         def __init__(self, windowGeometry="0x0", windowTitle="None", iconifyWindow = False) -> None:
@@ -80,7 +79,6 @@ class bombPuzzle:
         
         self.passed = False
         
-        
 class puzzleHandler:
     
     def __init__(self, name, puzzleid = None, *args) -> None:
@@ -119,7 +117,8 @@ class puzzleHandler:
                 self._editPuzzle(name)
                 
             case 7:
-                pass
+                
+                self.codePuzzle(args[0])
                 
             case 8:
                 pass
@@ -185,8 +184,6 @@ class puzzleHandler:
                 
                 self.fileObj = open(name[i], "w")
                 self.fileObj.close()
-                
-                
 
             time.sleep(0.5)
         
@@ -208,7 +205,6 @@ class puzzleHandler:
                 os.system("cls")
                 print("Wrong")
             
-    
     def reversePuzzle(self, name):
         
         self.fileObj = open(name, 'w')
@@ -247,4 +243,25 @@ class puzzleHandler:
             os.system("cls")
             print("Wrong")
             return self.riddlePuzzle(riddle, ans)
+    
+    def codePuzzle(self, randint):
+        
+        x = 2
+        y = ["1", 2, 4, True, False, 8, "x", x, "object", 1220]
+        print(f"""
+              
+            What is the Output of this code? :
+              
+            x = 2
+            y = ["1", 2, 4, True, False, 8, "x", x, "object", 1220]
+            
+            return str(y[{randint}])
+              """)
+        
+        while True:
+            userInput = input("Answer: ")
+            if userInput == str(y[randint]):
+                break
+            else:
+                print("Wrong")
         

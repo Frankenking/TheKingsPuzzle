@@ -9,45 +9,57 @@ import os, multiprocessing, time, random, threading
 class Program:
     
     def __init__(self) -> None:
-
-        _game = self.Game()
+        #instantiates the game
+        self.Game()
         
     class Game:
         
         def __init__(self) -> None:
             
+            #instantiates the menu
             self.menuData  = self.Menu()
+            
+            #sets default userposition
             self.userPos = [0,0]
             
+            #checks if the user has quit
             if self.menuData.hasQuit:
                 return
             
+            #loading data
             print(f" SEED: {self.menuData.gameSettings['seed']}\n DIFFICULTY: {self.menuData.gameSettings['difficulty']}\n Loading...")
             time.sleep(1)
             self._os('cls')
             
+            #used as a counter for some "story" text 
             self.storylineNumber:int = 0
+            
+            #sets the global seed
             random.seed(self.menuData.gameSettings.get('seed'))
             
-            
+            #calls the start to begin the game
             self._start()
         
         def _start(self):
             
+            #prints the first 5 storylines
             for _ in range(5):
                 print(assets.storylines[self.storylineNumber] + "\n-----------------")
                 time.sleep(1)
                 self._incStoryline()
             
+            #chooses a random window name from a list of random words in another python file and then instantiates a window used for input
             passWindowName = assets.names[random.randint(0, len(assets.names)-1)]
             self.passWindow = puzzles.passwordWindow('100x100',  passWindowName, True)
             
+            #if the correct word was inputed into the window then the game continues
             if self.passWindow.passed:
                 
                 print(assets.storylines[self.storylineNumber] + "\n------------------")
                 self._os('pause')
                 self._os('cls')
 
+            #otherwise the game ends
             else:
                 
                 self._os('cls')
@@ -55,39 +67,49 @@ class Program:
                 self._os('pause')
                 return
 
+            #coordinatemap and the actual map with its data
             self.coordinateMap = []
             self.mapObject = []
             
+            #generates the dimensions of the map depending on the difficulty
             self.dimensions:list = self._generateDimensions(self.menuData.gameSettings['difficulty'])
             
+            #generates the coordinate map using the dimensions
             for x in range(self.dimensions[0]):
                     for y in range(self.dimensions[1]):
                         self.coordinateMap.append(str(x) +","+ str(y))
             
+            #starts at the first room (index0) and applies the data from the cooridnate map to each room
             index = 0
             for point in self.coordinateMap:
                 self.mapObject.append(self.Room(point, index))
                 index+=1
             
+            #ithis just sets the room that the player must get to to win depending on the difficulty
             if self.menuData.gameSettings["difficulty"] != 1:
                 self._roomAtrSet((len(self.mapObject)*2)-1, 'cr', True)
             else:
                  self._roomAtrSet(len(self.mapObject)-1, 'cr', True)
-                 
+            
+            #sets the first room to completed
             self._roomAtrSet(0, 'c', True)
             
+            #starts the main process loops forever until the game ends
             self._proc()
             
         def _proc(self) -> None: #main runtime game loop
             
             while True:
                 
-                
+                #starting text telling the player what they can do and where they need to go
                 print(f"You begin the puzzle with a Map that outlines the rooms you can go to...\n------------------\nYour Goal is to reach the final room at {self.coordinateMap[len(self.coordinateMap)-1]}")
-                print(f"\nDECISIONS\n LOCATION\n MOVE\n")
+                print(f"\nDECISIONS\n LOCATION\n MOVE\n SEED\n")
+                
+                #get the userinput and lowercase it
                 userInput = self._getUserInput()
                 userInput = userInput.lower()
                 
+                #match what they typed in a call the corresponding function
                 match userInput:
                     
                     case "location":
@@ -105,12 +127,16 @@ class Program:
                         print("Invalid Option")
         
         def Usermove(self):
+            
+            #prompts for movement direction
             print("Direction you wish to move Left/Right/Up/Down")
             userInput = self._getUserInput()
             userInput = userInput.lower()
                     
             match userInput:
+                
                 case "up":
+                    #applies a change in positive y to the userpos variable
                     if self._checkValidMove(0,1):
                         self.userPos[1] = self.userPos[1] +1
                     else:
@@ -118,6 +144,7 @@ class Program:
                         return
                         
                 case "down":
+                    #applies a change in negative y to the userpos variable
                     if self._checkValidMove(0,-1):
                         self.userPos[1] = self.userPos[1] -1
                     else:
@@ -125,6 +152,7 @@ class Program:
                         return
                         
                 case "left":
+                    #applies a change in negative x to the userpos variable
                     if self._checkValidMove(-1,0):
                         self.userPos[0] = self.userPos[0] -1
                     else:
@@ -132,6 +160,7 @@ class Program:
                         return
                         
                 case "right":
+                    #applies a change in positive x to the userpos variable
                     if self._checkValidMove(1,0):
                         self.userPos[0] = self.userPos[0] +1
                     else:
@@ -143,35 +172,41 @@ class Program:
                     print("Invalid Option")
                     return self.Usermove()
             
+            #formats the position for the room so it doesnt cause an exception since rooms use a string for coordinates while the userPos variable uses a list, so just a concatination
             pos = f"{self.userPos[0]},{self.userPos[1]}"
+            
             for room in self.mapObject:
                 
+                #for every room if the room matches the current coordinates, if it is the final room you win, if not completed it starts a new random puzzle 
                 if getattr(room, 'coordinates') == pos:
+                    
+                    if getattr(room, "isCompletionRoom"):
+                            self._end()
+
                     if False == getattr(room, 'isCompleted'):
                         self._instancePuzzle(room)
                         self._roomAtrSet(getattr(room, 'roomNumber'), "c", True)
                         
-                        if getattr(room, "isCompletionRoom"):
-                            self._end()
         
         def _instancePuzzle(self, room):
             
-            print("Puzzle Instanced")
             puzzleid = getattr(room, 'roomType')
             
             name = assets.names[random.randint(0, len(assets.names)-1)]
             
             match puzzleid:
                 
-                #PUZZLE ONE
+                #PUZZLE ONE BACKWARDS
                 case 0:
                     
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
-                    
+                
+                #PUZZLE TWO CYPHER
                 case 1:
                     
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid, random.randint(0, 25))
                 
+                #PUZZLE THREE DELETE
                 case 2:
                     
                     roomPuzzle = self._generateThread(puzzles.puzzleHandler, name, puzzleid)
@@ -191,7 +226,7 @@ class Program:
                         except:
                             pass
                     
-                
+                #PUZZLE FOUR TIMED DELETE
                 case 3:
                     
                     wires = ["greenwire", "bluewire", "redwire", "yellowwire"]
@@ -206,12 +241,12 @@ class Program:
                         except:
                             pass
                     
-                            
                     if getattr(roomPuzzle, "passed") == False:
                         print("GAME OVER")
                         self._os("pause")
                         exit()
                     
+                #PUZZLE FIVE RIDDLES
                 case 4:
                     
                     index = random.randint(0, 14)
@@ -219,23 +254,26 @@ class Program:
                     ans = assets.riddleAnswers[index]
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid, riddle, ans)
                 
+                #PUZZLE SIX PATIENT
                 case 5:
                     
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                     
+                #PUZZLE SEVEN LUCK
                 case 6:
                     
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                 
+                #PUZZLE EIGHT CODE
                 case 7:
-                    pass
+                    
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid, random.randint(0,9))
                 
                 case 8:
                     pass
                 
                 case 9:
                     pass
-                
                 
                 case _:
                     print("Fatal Exception")
@@ -246,12 +284,12 @@ class Program:
         
         def _checkValidMove(self, x=0, y=0) -> bool:
             
+            #gets the rooms to go to
             targetRoom = []
             targetRoom.append(x+self.userPos[0])
             targetRoom.append(y+self.userPos[1])
             
-            print(targetRoom)
-            
+            #if the target room is not within the bounds of the map then return false else true
             if targetRoom[0] < 0 or targetRoom[0] > 4*self.menuData.gameSettings["difficulty"] or targetRoom[1] < 0 or targetRoom[1] > 4*self.menuData.gameSettings["difficulty"]:
                 return False
             else:
@@ -259,6 +297,7 @@ class Program:
             
         def _roomAtrSet(self, roomnumber, type, val):
             
+            #used for manipulating the room object attributes easily
             match type:
                 
                 case 'cR':
@@ -306,13 +345,14 @@ class Program:
                 y = 5*difficulty
                 return x, y
         
-        
-        
         #END FUNC-----------------------------------------------
         
         def _end(self):
-            pass
-        
+            self._os("cls")
+            print(f"You Won Congratulations!, Thank you for playing\n SEED: {self.menuData.gameSettings['seed']}\n DIFFICULTY: {self.menuData.gameSettings['difficulty']}")
+            self._os("pause")
+            quit()
+            
         #ROOM CONSTRUCTOR ----------------------------------------------------------------------------------------------------------------------------------------------------
         
         class Room:
@@ -324,9 +364,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(6,6)
-                
-                
+                self.roomType = random.randint(0,7)
                 
         #MENU CLASS ----------------------------------------------------------------------------------------------------------------------------------------------------
                 
@@ -368,8 +406,8 @@ class Program:
                         case _:
                             print("Invalid Request")
                             
-            
             def _gameOptions(self) -> None: #options interface that takes user input and edits the gameSettings attribute before the Game is started
+                
                 back = False
                 
                 while not back:
@@ -390,6 +428,7 @@ class Program:
                                 
                                 if userInput == 1 or userInput == 2:
                                     self.gameSettings["difficulty"] = userInput
+                                    
                                 else:
                                     print("Invalid Difficulty")
                                     return self._gameOptions()
@@ -407,7 +446,6 @@ class Program:
                                 
                     except:
                         print("Invalid Request")
-                        
                         
             def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions uses a type defaulted to string to ensure no crashes if the user mistypes or tries to break the program
                 
@@ -431,7 +469,7 @@ class Program:
                     print("Invalid Character")
                     return self._getUserInput(type)
             
-            def _load(self): #unfinished 
+            def _load(self): #unfinished  might add at later date
                 pass
             
             def _quit(self): #determines whether the user has quit or not, returns to master program instance which then ends the program
