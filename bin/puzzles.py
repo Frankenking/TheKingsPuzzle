@@ -89,7 +89,8 @@ class puzzleHandler:
                 self.bombMinigame(args[0], args[1])
                 
             case 4:
-                 pass
+                
+                 self.riddlePuzzle(args[0], args[1])
                 
             case 5:
                 pass
@@ -179,4 +180,14 @@ class puzzleHandler:
         self._bomb = bombPuzzle(wire, wires)
         self.passed = self._bomb.passed
 
+    def riddlePuzzle(self, riddle, ans):
+        
+        print(riddle)
+        userInput = input("Answer: ")
+        userInput = userInput.lower()
+        
+        if userInput != ans:
+            os.system("cls")
+            print("Wrong")
+            return self.riddlePuzzle(riddle, ans)
         

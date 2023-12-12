@@ -121,4 +121,42 @@ names = [
     "respect",
     "inn"
 ]
+
+riddles = [
+    "What has to be broken before you can use it?",
+    "I’m tall when I’m young, and I’m short when I’m old. What am I?",
+    "What is full of holes but still holds water?",
+    "What question can you never answer yes to?",
+    "What is always in front of you but can’t be seen?",
+    "A man who was outside in the rain without an umbrella or hat didn’t get a single hair on his head wet. Why?",
+    "What gets wet while drying?",
+    "I shave every day, but my beard stays the same. What am I?",
+    "You walk into a room that contains a match, a kerosene lamp, a candle and a fireplace. What would you light first?",
+    "I have branches, but no fruit, trunk or leaves. What am I?",
+    "What can’t talk but will reply when spoken to?",
+    "The more of this there is, the less you see. What is it?",
+    "What has many keys but can’t open a single lock?",
+    "What is black when it’s clean and white when it’s dirty?",
+    "I’m light as a feather, yet the strongest person can’t hold me for five minutes. What am I?" ,
+    "I’m found in socks, scarves and mittens; and often in the paws of playful kittens. What am I?"
+]
+
+riddleAnswers = [
+    "egg",
+    "candle",
+    "sponge",
+    "sleep",
+    "future",
+    "bald",
+    "towel",
+    "barber",
+    "match",
+    "bank",
+    "echo",
+    "darkness",
+    "piano",
+    "chalkboard",
+    "breath",
+    "yarn"
+]
 placeholder = ""

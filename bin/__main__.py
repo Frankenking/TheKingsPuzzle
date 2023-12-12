@@ -3,7 +3,7 @@
 import assets, puzzles
 
 #py imports
-import os, multiprocessing, time, random, threading, contextlib
+import os, multiprocessing, time, random, threading
 
 
 class Program:
@@ -213,7 +213,11 @@ class Program:
                         exit()
                     
                 case 4:
-                    pass
+                    
+                    index = random.randint(0, 14)
+                    riddle = assets.riddles[index]
+                    ans = assets.riddleAnswers[index]
+                    roomPuzzle = puzzles.puzzleHandler("", puzzleid, riddle, ans)
                 
                 case 5:
                     pass
@@ -319,7 +323,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(0,3)
+                self.roomType = random.randint(0,4)
                 
                 
                 
