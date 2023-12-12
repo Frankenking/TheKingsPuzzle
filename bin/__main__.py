@@ -197,7 +197,7 @@ class Program:
                     wires = ["greenwire", "bluewire", "redwire", "yellowwire"]
                     wireindex =random.randint(0,3)
                     wire = wires[wireindex]
-                    roomPuzzle = puzzles.puzzleHandler("", puzzleid, wire, wires)
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid, wire, wires)
                     
         
                     for wireName in wires:
@@ -217,13 +217,15 @@ class Program:
                     index = random.randint(0, 14)
                     riddle = assets.riddles[index]
                     ans = assets.riddleAnswers[index]
-                    roomPuzzle = puzzles.puzzleHandler("", puzzleid, riddle, ans)
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid, riddle, ans)
                 
                 case 5:
-                    pass
-                
+                    
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
+                    
                 case 6:
-                    pass
+                    
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                 
                 case 7:
                     pass
@@ -307,10 +309,9 @@ class Program:
         
         
         #END FUNC-----------------------------------------------
+        
         def _end(self):
             pass
-        
-        
         
         #ROOM CONSTRUCTOR ----------------------------------------------------------------------------------------------------------------------------------------------------
         
@@ -323,7 +324,7 @@ class Program:
                 self.isCompletionRoom = False
                 self.isCompleted = False
                 #self.roomType = random.randint(0, 15)
-                self.roomType = random.randint(0,4)
+                self.roomType = random.randint(5,5)
                 
                 
                 

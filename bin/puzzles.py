@@ -1,5 +1,6 @@
-import tkinter, os, time, threading
+import tkinter, os, time, threading, random
 from tkinter import messagebox
+from pynput import mouse
 
 
 class passwordWindow(tkinter.Tk):
@@ -27,6 +28,23 @@ class passwordWindow(tkinter.Tk):
                 self.passed = True
             
             self.destroy()
+    
+class patientPuzzle:
+    
+    def __init__(self) -> None:
+        self.mouseListener = mouse.Listener(on_move=self.on_move)
+        self.mouseListener.start()
+        self.secondCount = 0
+        
+        while True:
+            time.sleep(1)
+            self.secondCount+=1
+            if self.secondCount >= 30:
+                self.mouseListener.stop()
+                break
+    
+    def on_move(self, x, y):
+        self.secondCount = 0
 
 class bombPuzzle:
     
@@ -90,13 +108,15 @@ class puzzleHandler:
                 
             case 4:
                 
-                 self.riddlePuzzle(args[0], args[1])
+                self.riddlePuzzle(args[0], args[1])
                 
             case 5:
-                pass
+                
+                self._patientPuzzle(name)
                 
             case 6:
-                pass
+                
+                self._editPuzzle(name)
                 
             case 7:
                 pass
@@ -107,7 +127,42 @@ class puzzleHandler:
             case 9:
                 pass
                 
+    def _editPuzzle(self, name):
+        
+        messagebox.showinfo(name, "luck is not with you")
+        fileobj = open(name, "w")
+        fileobj.write("100")
+        fileobj.close()
+        
+        while True:
             
+            print("Type flip to flip a coin")
+            userInput = input("Flip a coin: ")
+            userInput = userInput.lower()
+            
+            try:
+                fileobj = open(name, "r")
+                data = int(fileobj.read)
+            except:
+                print("dont type words please")
+                userInput = ""
+            
+            if userInput == "flip":
+                if random.randint(0, 100) > data:
+                    os.remove(f"{os.getcwd()}\\{name}")
+                    break
+                else:
+                    os.system("cls")
+                    print("tails")
+                    fileobj.close()
+            else:
+                os.system("cls")
+    
+    def _patientPuzzle(self, name):
+        
+        messagebox.showinfo(name, "The key is patience")
+        _patient_puzzleMinigame = patientPuzzle()
+    
     def deletePuzzle(self, name):
         
         i=0
