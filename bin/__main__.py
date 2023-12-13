@@ -471,9 +471,6 @@ class Program:
                     print("Invalid Character")
                     return self._getUserInput(type)
             
-            def _load(self): #unfinished  might add at later date
-                pass
-            
             def _quit(self): #determines whether the user has quit or not, returns to master program instance which then ends the program
                 print("Quiting...")
                 time.sleep(1)
