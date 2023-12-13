@@ -66,7 +66,6 @@ class bombPuzzle:
                 fileExists = os.path.isfile(f"{os.getcwd()}\\{self.wires[g]}")
                 
                 if fileExists == False and self.wires[g] == self.wire:
-                    print("nex, iswire, Check Passed")
                     self.passed = True
                     return
                     
@@ -121,10 +120,12 @@ class puzzleHandler:
                 self.codePuzzle(args[0])
                 
             case 8:
-                pass
+                
+                self.colorPuzzle(name, args[0])
                 
             case 9:
-                pass
+                
+                self.timingPuzzle(name)
                 
     def _editPuzzle(self, name):
         
@@ -265,3 +266,57 @@ class puzzleHandler:
             else:
                 print("Wrong")
         
+    def colorPuzzle(self, name, randint):
+            
+        fileobj = open(name, "w")
+        
+        match randint:
+            case 0:
+                fileobj.write("255,0,0")
+                answer = "red"
+            case 1:
+                fileobj.write("0,255,0")
+                answer = "green"
+            case 2:
+                fileobj.write("0,0,255")
+                answer = "blue"
+            
+        fileobj.close()
+            
+        while True:
+            userInput = input("Answer: ")
+            userInput = userInput.lower()
+            if userInput == answer:
+                os.remove(name)
+                return
+            else:
+                print("Wrong")
+        
+    def timingPuzzle(self, name):
+        
+        fileobj = open("file", "w")
+        
+        temp = name
+        l,m=[],[]
+        for i in temp:
+            l.append(ord(i))
+        for i in l:
+            m.append(str(bin(i)[2:]))
+        temp = m
+        
+        binaryName = ''.join(temp)
+        
+        fileobj.write(binaryName)
+        fileobj.close()
+        
+        while True:
+            userInput = input("Answer: ")
+            if userInput == name:
+                try:
+                    os.remove("file")
+                except:
+                    pass
+                return
+            else:
+                print("Wrong")
+            

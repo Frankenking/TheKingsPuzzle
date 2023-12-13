@@ -275,10 +275,11 @@ class Program:
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid, random.randint(0,9))
                 
                 case 8:
-                    pass
+                    
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid, random.randint(0,2))
                 
                 case 9:
-                    pass
+                    roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                 
                 case _:
                     print("Fatal Exception")
@@ -365,8 +366,7 @@ class Program:
                 self.roomNumber = roomN
                 self.isCompletionRoom = False
                 self.isCompleted = False
-                #self.roomType = random.randint(0, 9)
-                self.roomType = random.randint(0,7)
+                self.roomType = random.randint(0,9)
                 
         #MENU CLASS ----------------------------------------------------------------------------------------------------------------------------------------------------
                 
