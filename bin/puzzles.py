@@ -1,4 +1,4 @@
-import tkinter, os, time, threading, random
+import tkinter, os, time, random
 from tkinter import messagebox
 from pynput import mouse
 

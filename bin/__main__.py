@@ -246,7 +246,7 @@ class Program:
                         except:
                             pass
                     
-                    if getattr(roomPuzzle, "passed") == False:
+                    if roomPuzzle.passed == False:
                         print("GAME OVER")
                         self._os("pause")
                         exit()
@@ -338,9 +338,6 @@ class Program:
                 
         def _os(self, cmd): #allows easier syntax when managing terminal command inputs, cls, dir, cd, etc.
                 os.system(cmd)
-        
-        def _generateProc(self, *args):  #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc.
-            return multiprocessing.Process(target=args[0], args=args[1:len(args)])
         
         def _generateThread(self, *args): #uses the first value in args (the target) in target= then takes everything after it as input if you want to uses variables in a method, class, etc. except its a thread 
             return threading.Thread(target=args[0], args=args[1:len(args)])
