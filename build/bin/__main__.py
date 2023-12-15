@@ -130,6 +130,7 @@ class Program:
                         print("Invalid Option")
         
         def Usermove(self):
+            #handles usermovement it is called in the previous proc() method
             
             #prompts for movement direction
             print("Direction you wish to move Left/Right/Up/Down")
@@ -169,7 +170,8 @@ class Program:
                     else:
                         print("Invalid Direction")
                         return
-                        
+                
+                #if the input doesnt match anything then this
                 case _:
                     self._os("cls")
                     print("Invalid Option")
@@ -195,9 +197,12 @@ class Program:
         
         def _instancePuzzle(self, room):
             
-            puzzleid = getattr(room, 'roomType')
+            #this function handles creating the puzzles and playing the puzzles out
             
-            name = assets.names[random.randint(0, len(assets.names)-1)]
+            puzzleid = getattr(room, 'roomType') #pulls the puzzle id from the corresponding room to decide which puzzle to give to the user
+            
+            
+            name = assets.names[random.randint(0, len(assets.names)-1)] #every puzzle is assigned a name from a random list of words
             
             match puzzleid:
                 
@@ -234,18 +239,20 @@ class Program:
                 #PUZZLE FOUR TIMED DELETE
                 case 3:
                     
+                    #wires that will be generated in the folder
                     wires = ["greenwire", "bluewire", "redwire", "yellowwire"]
-                    wireindex =random.randint(0,3)
+                    wireindex =random.randint(0,3) # the key wire to cut
                     wire = wires[wireindex]
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid, wire, wires)
                     
-        
+                    #delete the wires after finish
                     for wireName in wires:
                         try:
                             os.remove(wireName)
                         except:
                             pass
                     
+                    #if you cut the wrongwire/timer ran out the program closes itself
                     if roomPuzzle.passed == False:
                         print("GAME OVER")
                         self._os("pause")
@@ -254,6 +261,7 @@ class Program:
                 #PUZZLE FIVE RIDDLES
                 case 4:
                     
+                    # riddle number then the corresponding riddle and answer
                     index = random.randint(0, 14)
                     riddle = assets.riddles[index]
                     ans = assets.riddleAnswers[index]
@@ -262,33 +270,43 @@ class Program:
                 #PUZZLE SIX PATIENT
                 case 5:
                     
+                    #see function in other file
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                     
                 #PUZZLE SEVEN LUCK
                 case 6:
                     
+                    #see function in other file
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                 
                 #PUZZLE EIGHT CODE
                 case 7:
                     
+                    #see function in other file
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid, random.randint(0,9))
                 
+                #PUZZLE 9 COLOR
                 case 8:
                     
+                    #see function in other file
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid, random.randint(0,2))
                 
+                #PUZZLE 10 BINARY
                 case 9:
+                    
+                    #see function in other file
                     roomPuzzle = puzzles.puzzleHandler(name, puzzleid)
                 
                 case _:
+                    #this should almost never happen unless im stupid
                     print("Fatal Exception")
-                    raise Exception
+                    raise SyntaxError
                 
             self._os("cls")
             print("----------------Room Completed!----------------")
         
         def _checkValidMove(self, x=0, y=0) -> bool:
+            #this function is used to provide a check based on the user position to see if the user's input (right/left/up/down) is within the bounds of the game map
             
             #gets the rooms to go to
             targetRoom = []
@@ -303,7 +321,7 @@ class Program:
             
         def _roomAtrSet(self, roomnumber, type, val):
             
-            #used for manipulating the room object attributes easily
+            #used for manipulating the room object attributes easily for syntaxtical reasons
             match type:
                 
                 case 'cR':
@@ -344,6 +362,7 @@ class Program:
             return threading.Thread(target=args[0], args=args[1:len(args)])
         
         def _generateDimensions(self, difficulty) -> list:
+            #generates the map, depending on difficulty level the map size will increase by a factor
                 x = 5*difficulty
                 y = 5*difficulty
                 return x, y
@@ -351,33 +370,36 @@ class Program:
         #END FUNC-----------------------------------------------
         
         def _end(self):
+            #when the game ends
             self._os("cls")
             print(f"You Won Congratulations!, Thank you for playing\n SEED: {self.menuData.gameSettings['seed']}\n DIFFICULTY: {self.menuData.gameSettings['difficulty']}")
             self._os("pause")
             quit()
-            
+
         #ROOM CONSTRUCTOR ----------------------------------------------------------------------------------------------------------------------------------------------------
-        
+
         class Room:
                 
             def __init__(self, roomCoords, roomN) -> None:
+                #the standard room and its properties/attributes accessed/stored
                 
                 self.coordinates = roomCoords
                 self.roomNumber = roomN
                 self.isCompletionRoom = False
                 self.isCompleted = False
-                self.roomType = random.randint(0,9)
+                self.roomType = random.randint(6,6)
                 
         #MENU CLASS ----------------------------------------------------------------------------------------------------------------------------------------------------
                 
         class Menu:
         
             def __init__(self)  -> None:
+                #the menu for handling options, and other such before the user starts the game
                 
-                self.gameSettings = {'seed': 0, 'difficulty':1}
+                self.gameSettings = {'seed': 0, 'difficulty':1} # settings dict
                 self.hasQuit = False
                 
-                print(assets.ascii[0])
+                print(assets.ascii[0]) #ascii string for 'MENU'
                 
                 self._os('pause')
                 self._os('cls')
@@ -386,8 +408,9 @@ class Program:
                 
             def _menu(self) -> None: #Menu handles interactions before the game starts
                 
+                #while the user has not set quit to true it loops the interactions
                 while not self.hasQuit:
-                    print(f"{assets.ascii[1]} \n Type the words you see to access them Ex 'OPTIONS' \n\nSTART\nLOAD\nOPTIONS\nQUIT\nYou may want to visit OPTIONS first to customize your experience")
+                    print(f"{assets.ascii[1]} \n Type the words you see to access them Ex 'OPTIONS' \n\nSTART\nOPTIONS\nQUIT\nYou may want to visit OPTIONS first to customize your experience")
                     userInput = self._getUserInput()
                     userInput = userInput.upper()
                     
@@ -410,8 +433,9 @@ class Program:
                             
             def _gameOptions(self) -> None: #options interface that takes user input and edits the gameSettings attribute before the Game is started
                 
-                back = False
+                back = False 
                 
+                #checks while the user has not set back to true
                 while not back:
                     
                     print(self.gameSettings)
@@ -451,6 +475,7 @@ class Program:
                         
             def _getUserInput(self, type='str'): #input handler, deals with "complex" user interactions uses a type defaulted to string to ensure no crashes if the user mistypes or tries to break the program
                 
+                #this one is native to the menu class
                 try:
                     userInput = input("\nUser Input -->")
                     self._os('cls')

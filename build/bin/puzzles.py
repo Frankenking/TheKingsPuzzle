@@ -6,25 +6,27 @@ class passwordWindow(tkinter.Tk):
         
         def __init__(self, windowGeometry="0x0", windowTitle="None", iconifyWindow = False) -> None:
             super().__init__()
-            self.passed = False
-            self.titleName = windowTitle
-            self.geometry(windowGeometry)
-            if iconifyWindow:
-                self.iconify()
-            self.title(windowTitle)
+            self.passed = False #beat the puzzle or not
+            self.titleName = windowTitle #name
+            self.geometry(windowGeometry) #dims
             
-            self.textAnswer = tkinter.StringVar(self)
+            if iconifyWindow:
+                self.iconify() #minimize
+                
+            self.title(windowTitle) #titl
+            
+            self.textAnswer = tkinter.StringVar(self) #entry box for answer
             self.entry = tkinter.Entry(self, textvariable=self.textAnswer)
             self.entry.pack()
             
-            self.submitButton = tkinter.Button(self, text="Submit Answer", command=self.submit)
+            self.submitButton = tkinter.Button(self, text="Submit Answer", command=self.submit) #submit answer
             self.submitButton.place(x=0, y=50)
             self.mainloop()
 
         def submit(self):
             
             if self.textAnswer.get() == self.titleName:
-                self.passed = True
+                self.passed = True #if you got it right you beat it...
             
             self.destroy()
     
@@ -32,9 +34,10 @@ class patientPuzzle:
     
     def __init__(self) -> None:
         self.mouseListener = mouse.Listener(on_move=self.on_move)
-        self.mouseListener.start()
+        self.mouseListener.start() #listen for mouse movement
         self.secondCount = 0
         
+        #count every second the user has not move their mouse
         while True:
             time.sleep(1)
             self.secondCount+=1
@@ -42,30 +45,32 @@ class patientPuzzle:
                 self.mouseListener.stop()
                 break
     
+    #if they moved it reset it
     def on_move(self, x, y):
         self.secondCount = 0
+
+#alot of these classes could use cleanup but im not going to touch anything for now
 
 class bombPuzzle:
     
     def __init__(self, wire, wires) -> None:
         super().__init__()
         
-        self.wires = wires
-        self.wire = wire
         self.passed = False
-        messagebox.showinfo("", f"cut the {self.wire}")
+        messagebox.showinfo("", f"cut the {wire}") #tells the user which wire to cut
         
         for i in wires:
+            #generate wire files
             fileObj = open(i, "w")
             fileObj.close()
         
         for i in range(0, 30):
-            
+            #count down from 30
             for g in range(0,4):
+                #check for every file wire if it exists in the cwd
+                fileExists = os.path.isfile(f"{os.getcwd()}\\{wires[g]}")
                 
-                fileExists = os.path.isfile(f"{os.getcwd()}\\{self.wires[g]}")
-                
-                if fileExists == False and self.wires[g] == self.wire:
+                if fileExists == False and wires[g] == wire:
                     self.passed = True
                     return
                     
@@ -76,17 +81,19 @@ class bombPuzzle:
             print(f"{30-i} seconds left")
             time.sleep(1)
         
+        #;(
         self.passed = False
         
 class puzzleHandler:
     
+    #class for handling all the functions and proccess for the puzzles and making them do things and stuff
     def __init__(self, name, puzzleid = None, *args) -> None:
         
-        self.fileToDelete = ""
-        self.passed = False
+        self.passed = False #variable used to check if they actually beat the puzzle or not
         
         match puzzleid:
             
+            #match every puzzle id to the corresponding class/method
             case 0:
                 
                 self.reversePuzzle(name)
@@ -125,10 +132,11 @@ class puzzleHandler:
                 
             case 9:
                 
-                self.timingPuzzle(name)
+                self.binaryPuzzle(name)
                 
     def _editPuzzle(self, name):
         
+        #generate file
         messagebox.showinfo(name, "luck is not with you")
         fileobj = open(name, "w")
         fileobj.write("100")
@@ -136,6 +144,7 @@ class puzzleHandler:
         
         while True:
             
+            #this puzzle is rigged against the player in an impossible coin flip, unless they change the chance which is pulled from the generated file
             print("Type flip to flip a coin, you must flip heads to win")
             userInput = input("Flip a coin: ")
             userInput = userInput.lower()
@@ -162,34 +171,38 @@ class puzzleHandler:
     
     def _patientPuzzle(self, name):
         
+        #starts the patient puzzle and instances the class
         messagebox.showinfo(name, "The key is patience")
         _patient_puzzleMinigame = patientPuzzle()
     
     def deletePuzzle(self, name):
         
+        #the user must delete each file one after another a new one every time, each file being named sequetially a letter of the answer
+        
         i=0
         
-        self.fileObj = open(name[i], "w")
-        self.fileObj.close()
+        fileObj = open(name[i], "w") #create first file
+        fileObj.close()
         
         while True:
             
-            fileExists = os.path.isfile(f"{os.getcwd()}\\{name[i]}")
+            fileExists = os.path.isfile(f"{os.getcwd()}\\{name[i]}") #check while current file not deleted if it does exsists make the next one
             
             if fileExists == False:
                 
                 i+=1
                 
-                if i == len(name):
+                if i == len(name): #end if no more letters left to make
                     return
                 
-                self.fileObj = open(name[i], "w")
-                self.fileObj.close()
+                fileObj = open(name[i], "w")
+                fileObj.close()
 
             time.sleep(0.5)
         
     def cypherPuzzle(self, name, key):
         
+        #encrypts a word using a random key in a caesarcypher
         encrypted = ""
         for i in range(len(name)):
             char = name[i]
@@ -198,7 +211,7 @@ class puzzleHandler:
 
             encrypted += chr((ord(char) + key - 97) % 26 + 97)
         
-        while True:
+        while True: 
             print(f"You are given a set of characters, '{''.join(encrypted)}', and then a number {key}")
             if input("Answer: ") == name:
                 break
@@ -207,16 +220,17 @@ class puzzleHandler:
                 print("Wrong")
             
     def reversePuzzle(self, name):
+        #the user must type the name of the file backwards into the command terminal
         
-        self.fileObj = open(name, 'w')
-        self.fileObj.write("The answer to this puzzle requires an input of text into the terminal relating to the file, when you think you have the answer type it into the terminal,                                                                                                                                                                                                                                                                                                               Think Backwards")
-        self.fileObj.close()
+        fileObj = open(name, 'w')
+        fileObj.write("The answer to this puzzle requires an input of text into the terminal relating to the file, when you think you have the answer type it into the terminal,                                                                                                                                                                                                                                                                                                               Think Backwards")
+        fileObj.close()
         
         listname = []
-        for i in name:
+        for i in name: # make a new list of all the letters
             listname.append(i)
         listname = listname[::-1] #INVERT
-        invname = ''.join(listname)
+        invname = ''.join(listname) #then join into a string again i could've just used a built in python function but I think its better to practice and problem solve yourself
         
         while True:
             userInp = input("Answer: ")
@@ -247,6 +261,7 @@ class puzzleHandler:
     
     def codePuzzle(self, randint):
         
+        #funny little one where the user has to solve a simple coding problem
         x = 2
         y = ["1", 2, 4, True, False, 8, "x", x, "object", 1220]
         print(f"""
@@ -269,7 +284,7 @@ class puzzleHandler:
     def colorPuzzle(self, name, randint):
             
         fileobj = open(name, "w")
-        
+        #depending on the randominteger write a color RGB in the textfile then ask them for the corresponding color name
         match randint:
             case 0:
                 fileobj.write("255,0,0")
@@ -292,10 +307,12 @@ class puzzleHandler:
             else:
                 print("Wrong")
         
-    def timingPuzzle(self, name):
+    def binaryPuzzle(self, name):
+        
         
         fileobj = open("file", "w")
         
+        #turn it into unicode then convert unicode to binary and reassign it to binaryName
         temp = name
         l,m=[],[]
         for i in temp:
@@ -309,6 +326,7 @@ class puzzleHandler:
         fileobj.write(binaryName)
         fileobj.close()
         
+        #wait for answer
         while True:
             userInput = input("Answer: ")
             if userInput == name:
@@ -319,4 +337,3 @@ class puzzleHandler:
                 return
             else:
                 print("Wrong")
-            
